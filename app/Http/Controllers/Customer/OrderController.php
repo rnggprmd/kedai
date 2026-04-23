@@ -9,9 +9,20 @@ use App\Models\Menu;
 use App\Models\Order;
 use App\Models\OrderItem;
 use Illuminate\Http\Request;
+use Midtrans\Config;
+use Midtrans\Snap;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class OrderController extends Controller
 {
+    public function __construct()
+    {
+        Config::$serverKey = config('midtrans.server_key');
+        Config::$isProduction = config('midtrans.is_production');
+        Config::$isSanitized = config('midtrans.is_sanitized');
+        Config::$is3ds = config('midtrans.is_3ds');
+    }
+
     /**
      * Tampilkan halaman menu untuk pelanggan berdasarkan QR token meja.
      */
@@ -74,6 +85,24 @@ class OrderController extends Controller
             // Hitung total
             $order->hitungTotal();
 
+            // Midtrans Params
+            $params = [
+                'transaction_details' => [
+                    'order_id' => $order->kode_order,
+                    'gross_amount' => (int) $order->total_harga,
+                ],
+                'customer_details' => [
+                    'first_name' => $order->nama_pelanggan ?: 'Customer',
+                ],
+            ];
+
+            try {
+                $snapToken = Snap::getSnapToken($params);
+                $order->update(['snap_token' => $snapToken]);
+            } catch (\Exception $e) {
+                \Log::error('Midtrans Error: ' . $e->getMessage());
+            }
+
             return redirect()->route('customer.order.status', [
                 'qr_token' => $qr_token,
                 'order' => $order->id,
@@ -94,5 +123,19 @@ class OrderController extends Controller
         $order->load('items');
 
         return view('customer.status', compact('table', 'order'));
+    }
+
+    /**
+     * Download Invoice PDF.
+     */
+    public function downloadInvoice(string $qr_token, Order $order)
+    {
+        $table = Table::where('qr_token', $qr_token)->firstOrFail();
+        abort_unless($order->table_id === $table->id, 404);
+
+        $order->load(['items', 'table']);
+        
+        $pdf = Pdf::loadView('customer.invoice', compact('order'));
+        return $pdf->download('Invoice-' . $order->kode_order . '.pdf');
     }
 }

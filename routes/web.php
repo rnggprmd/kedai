@@ -36,6 +36,10 @@ Route::get('/', function () {
 Route::get('/order/{qr_token}', [CustomerOrderController::class, 'index'])->name('customer.menu');
 Route::post('/order/{qr_token}', [CustomerOrderController::class, 'store'])->name('customer.order.store');
 Route::get('/order/{qr_token}/status/{order}', [CustomerOrderController::class, 'status'])->name('customer.order.status');
+Route::get('/order/{qr_token}/status/{order}/invoice', [CustomerOrderController::class, 'downloadInvoice'])->name('customer.order.invoice');
+
+// Midtrans Notification
+Route::post('/midtrans/notification', [\App\Http\Controllers\PaymentController::class, 'notification']);
 
 /*
 |--------------------------------------------------------------------------

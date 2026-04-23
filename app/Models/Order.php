@@ -14,6 +14,7 @@ class Order extends Model
         'status',
         'total_harga',
         'kasir_id',
+        'snap_token',
     ];
 
     protected $casts = [

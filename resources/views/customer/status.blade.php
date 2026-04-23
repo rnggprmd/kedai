@@ -89,6 +89,19 @@
         </div>
     </div>
 
+    <!-- Midtrans Payment Button -->
+    @if($order->snap_token && !in_array($order->status, ['completed', 'cancelled']))
+    <div class="mb-8 animate-in slide-in-from-bottom-5 duration-700">
+        <div class="bg-indigo-50 border border-indigo-100 rounded-[2rem] p-6 text-center">
+            <p class="text-indigo-600 font-bold text-sm mb-4">Secure your order with digital payment</p>
+            <button id="pay-button" class="w-full bg-indigo-600 text-white py-5 rounded-2xl font-black text-lg shadow-xl shadow-indigo-100 hover:bg-indigo-700 transition-all active:scale-95 flex items-center justify-center gap-3">
+                <i class="bi bi-wallet2 text-xl"></i> 
+                Pay with Midtrans
+            </button>
+        </div>
+    </div>
+    @endif
+
     <!-- Floating Action Refresh -->
     <div class="text-center flex flex-col items-center gap-4">
         <button onclick="window.location.reload()" class="group inline-flex items-center gap-3 px-8 py-4 bg-white border border-slate-200 rounded-2xl text-slate-600 font-bold text-sm hover:bg-slate-900 hover:text-white hover:border-slate-900 transition-all shadow-sm hover:shadow-xl active:scale-95">
@@ -100,13 +113,41 @@
             <i class="bi bi-plus-circle"></i> Want to order more?
         </a>
 
-        <p class="mt-4 text-slate-400 text-[10px] font-bold uppercase tracking-[0.2em]">
-            Auto-checking every 30s • Last update: {{ now()->format('H:i:s') }}
-        </p>
+        <div class="mt-8 pt-8 border-t border-slate-100 w-full flex flex-col items-center gap-4">
+            <a href="{{ route('customer.order.invoice', ['qr_token' => $table->qr_token, 'order' => $order->id]) }}" class="inline-flex items-center gap-2 px-6 py-3 bg-slate-100 text-slate-600 rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-slate-200 transition-all">
+                <i class="bi bi-file-earmark-pdf"></i> Download Invoice
+            </a>
+            
+            <p class="text-slate-400 text-[10px] font-bold uppercase tracking-[0.2em]">
+                Auto-checking every 30s • Last update: {{ now()->format('H:i:s') }}
+            </p>
+        </div>
     </div>
 </div>
 
-<script>
+<!-- Midtrans Snap JS -->
+<script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ config('midtrans.client_key') }}"></script>
+<script type="text/javascript">
+    const payButton = document.getElementById('pay-button');
+    if (payButton) {
+        payButton.onclick = function() {
+            window.snap.pay('{{ $order->snap_token }}', {
+                onSuccess: function(result) {
+                    window.location.reload();
+                },
+                onPending: function(result) {
+                    window.location.reload();
+                },
+                onError: function(result) {
+                    window.location.reload();
+                },
+                onClose: function() {
+                    console.log('Customer closed the popup without finishing the payment');
+                }
+            });
+        };
+    }
+
     // Auto-refresh logic: Poll every 30 seconds unless completed/cancelled
     @if(!in_array($order->status, ['completed', 'cancelled']))
     setTimeout(() => {
