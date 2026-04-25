@@ -27,9 +27,9 @@ use App\Http\Controllers\Customer\OrderController as CustomerOrderController;
 |--------------------------------------------------------------------------
 */
 
-// Landing page
+// Redirect to login
 Route::get('/', function () {
-    return view('welcome');
+    return redirect()->route('login');
 })->name('home');
 
 // Scan QR → masuk halaman pesan
@@ -72,9 +72,10 @@ Route::prefix('admin')
 
         // Kelola Menu
         Route::resource('categories', AdminCategoryController::class);
-        Route::resource('menus', AdminMenuController::class);
+        Route::resource('menus', AdminMenuController::class)->except(['show']);
 
         // Kelola Meja
+        Route::get('tables/{table}/qr-pdf', [TableController::class, 'downloadQrPdf'])->name('tables.qr_pdf');
         Route::resource('tables', TableController::class);
 
         // Transaksi
@@ -103,10 +104,11 @@ Route::prefix('kasir')
 
         // Lihat Menu (read-only)
         Route::get('menus', [KasirMenuController::class, 'index'])->name('menus.index');
-        Route::get('menus/{menu}', [KasirMenuController::class, 'show'])->name('menus.show');
 
         // Transaksi
         Route::get('orders', [KasirOrderController::class, 'index'])->name('orders.index');
+        Route::get('orders/create', [KasirOrderController::class, 'create'])->name('orders.create');
+        Route::post('orders', [KasirOrderController::class, 'store'])->name('orders.store');
         Route::get('orders/{order}', [KasirOrderController::class, 'show'])->name('orders.show');
         Route::patch('orders/{order}/status', [KasirOrderController::class, 'updateStatus'])->name('orders.updateStatus');
         Route::post('orders/{order}/pay', [KasirOrderController::class, 'pay'])->name('orders.pay');

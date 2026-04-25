@@ -8,19 +8,14 @@ use Illuminate\Http\Request;
 
 class OrderController extends Controller
 {
-    public function index(Request $request)
+    public function index()
     {
-        $query = Order::with(['table', 'kasir', 'items'])->withCount('items');
-
-        if ($request->filled('status')) {
-            $query->where('status', $request->status);
-        }
-
-        if ($request->filled('tanggal')) {
-            $query->whereDate('created_at', $request->tanggal);
-        }
-
-        $orders = $query->latest()->paginate(20);
+        // Get latest 500 orders for client-side filtering performance
+        $orders = Order::with(['table', 'kasir', 'items'])
+            ->withCount('items')
+            ->latest()
+            ->take(500)
+            ->get();
 
         return view('admin.orders.index', compact('orders'));
     }
@@ -34,7 +29,7 @@ class OrderController extends Controller
     public function updateStatus(Request $request, Order $order)
     {
         $request->validate([
-            'status' => 'required|in:pending,confirmed,preparing,ready,completed,cancelled',
+            'status' => 'required|in:confirmed,completed,cancelled',
         ]);
 
         $order->update([

@@ -3,127 +3,106 @@
 @section('title', 'Admin Dashboard')
 
 @section('content')
-<!-- High-Impact Welcome Banner (Tailwind) -->
-<div class="relative overflow-hidden bg-indigo-600 rounded-[2rem] p-8 lg:p-12 text-white shadow-2xl shadow-indigo-200 mb-10">
-    <div class="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-8">
-        <div class="max-w-2xl">
-            <h2 class="text-3xl lg:text-5xl font-extrabold tracking-tight mb-4">
-                Welcome back, {{ auth()->user()->name }}! 👋
+<!-- High-Impact Welcome Banner (Premium Purple Theme) -->
+<div class="relative overflow-hidden rounded-[2.5rem] p-10 lg:p-14 text-white shadow-2xl mb-12" style="background: linear-gradient(135deg, #240046 0%, #3C096C 100%);">
+    <div class="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-10">
+        <div>
+            <div class="inline-flex items-center gap-2 px-4 py-1.5 bg-brand-primary/20 border border-brand-primary/30 rounded-full text-[10px] font-black uppercase tracking-widest mb-6">
+                <span class="w-1.5 h-1.5 bg-brand-secondary rounded-full animate-ping"></span> Operasi Global Aktif
+            </div>
+            <h2 class="text-4xl lg:text-6xl font-black tracking-tighter mb-4 leading-none">
+                Selamat Datang, {{ explode(' ', auth()->user()->name)[0] }}! <span class="text-brand-secondary">.</span>
             </h2>
-            <p class="text-indigo-100 text-lg font-medium opacity-90">
-                Your restaurant is performing well today. Here's a quick overview of your business metrics.
+            <p class="text-slate-400 text-lg font-medium max-w-md opacity-90">
+                Wawasan data telah siap. Kecerdasan bisnis Anda ada dalam genggaman.
             </p>
         </div>
-        <div class="hidden lg:flex items-center gap-6">
-            <div class="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/10">
-                <div class="text-indigo-200 text-[10px] font-bold uppercase tracking-widest mb-1">Status</div>
-                <div class="flex items-center gap-2">
-                    <span class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></span>
-                    <span class="font-extrabold text-xl">LIVE</span>
+        <div class="flex items-center gap-6">
+            <div class="bg-white/5 backdrop-blur-xl rounded-[2rem] p-8 border border-white/10 shadow-2xl">
+                <div class="text-slate-500 text-[10px] font-black uppercase tracking-widest mb-3">Waktu Sistem Langsung</div>
+                <div class="flex items-center gap-4">
+                    <div class="w-4 h-4 bg-brand-secondary rounded-full shadow-[0_0_20px_#FFD60A]"></div>
+                    <div class="font-black text-4xl tracking-tighter">{{ now()->format('H:i') }} <span class="text-slate-500 text-sm font-bold uppercase tracking-widest ml-1">WIB</span></div>
                 </div>
-            </div>
-            <div class="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/10">
-                <div class="text-indigo-200 text-[10px] font-bold uppercase tracking-widest mb-1">Time</div>
-                <div class="font-extrabold text-xl">{{ now()->format('H:i') }}</div>
             </div>
         </div>
     </div>
-    <!-- Decorative Glows -->
-    <div class="absolute -top-24 -right-24 w-64 h-64 bg-white/10 rounded-full blur-3xl"></div>
-    <div class="absolute -bottom-24 -left-24 w-64 h-64 bg-indigo-500/50 rounded-full blur-3xl"></div>
+    <!-- Abstract Premium Shapes -->
+    <div class="absolute top-0 right-0 w-1/3 h-full bg-brand-primary/5 blur-[120px] rounded-full translate-x-1/2"></div>
+    <div class="absolute bottom-0 left-0 w-1/4 h-full bg-brand-secondary/5 blur-[100px] rounded-full -translate-x-1/2"></div>
 </div>
 
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 mb-10">
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
     @php
         $statsData = [
-            [
-                'label' => 'Total Revenue', 
-                'value' => 'Rp ' . number_format($stats['pendapatan_hari_ini'], 0, ',', '.'),
-                'icon' => 'bi-wallet2',
-                'color' => 'indigo',
-                'trend' => '+12.5%'
-            ],
-            [
-                'label' => 'Pending Orders', 
-                'value' => $stats['order_pending'],
-                'icon' => 'bi-clock-history',
-                'color' => 'amber',
-                'trend' => 'Action Required'
-            ],
-            [
-                'label' => 'Success Orders', 
-                'value' => $stats['total_order_hari_ini'],
-                'icon' => 'bi-check-circle',
-                'color' => 'emerald',
-                'trend' => 'Today'
-            ],
+            ['label' => 'Total Pendapatan', 'val' => 'Rp ' . number_format($stats['pendapatan_hari_ini'], 0, ',', '.'), 'color' => 'bg-brand-accent/10 text-brand-accent', 'icon' => 'bi-wallet2', 'trend' => '+12.5%'],
+            ['label' => 'Antrean Pending', 'val' => $stats['order_pending'], 'color' => 'bg-amber-500/10 text-amber-500', 'icon' => 'bi-clock-history', 'trend' => 'Prioritas'],
+            ['label' => 'Pesanan Berhasil', 'val' => $stats['total_order_hari_ini'], 'color' => 'bg-brand-secondary/10 text-brand-primary', 'icon' => 'bi-check2-circle', 'trend' => 'Harian'],
+            ['label' => 'Total Menu', 'val' => $stats['total_menu'], 'color' => 'bg-brand-primary/10 text-brand-primary', 'icon' => 'bi-cup-hot', 'trend' => 'Aktif'],
         ];
     @endphp
 
     @foreach($statsData as $s)
-    <div class="bg-white p-8 rounded-[2rem] border border-slate-200 shadow-sm hover:shadow-xl transition-all duration-300 group">
-        <div class="flex items-start justify-between mb-6">
-            <div class="w-14 h-14 bg-{{ $s['color'] }}-50 text-{{ $s['color'] }}-600 rounded-2xl flex items-center justify-center transition-colors group-hover:bg-{{ $s['color'] }}-600 group-hover:text-white">
-                <i class="bi {{ $s['icon'] }} text-2xl"></i>
+    <div class="bg-white p-8 rounded-[2.5rem] border border-slate-200 shadow-sm hover:shadow-xl transition-all duration-500 group">
+        <div class="flex items-center justify-between mb-6">
+            <div class="w-14 h-14 {{ $s['color'] }} rounded-2xl flex items-center justify-center text-2xl shadow-sm group-hover:scale-110 transition-transform">
+                <i class="bi {{ $s['icon'] }}"></i>
             </div>
-            <span class="text-xs font-extrabold px-3 py-1 bg-slate-50 text-slate-500 rounded-full border border-slate-100">
-                {{ $s['trend'] }}
-            </span>
+            <div class="text-slate-300 font-black text-[10px] uppercase tracking-widest">{{ $s['trend'] }}</div>
         </div>
-        <div class="text-slate-400 text-[10px] font-bold uppercase tracking-widest mb-1">{{ $s['label'] }}</div>
-        <div class="text-slate-900 text-3xl font-extrabold tracking-tight">{{ $s['value'] }}</div>
+        <div class="text-slate-400 text-[10px] font-black uppercase tracking-widest mb-1">{{ $s['label'] }}</div>
+        <div class="text-slate-900 text-3xl font-black tracking-tighter">{{ $s['val'] }}</div>
     </div>
     @endforeach
 </div>
 
-<div class="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8 mb-10">
-    <!-- Chart Section -->
-    <div class="lg:col-span-2 bg-white p-8 rounded-[2rem] border border-slate-200 shadow-sm">
-        <div class="flex items-center justify-between mb-8">
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
+    <!-- Visual Performance Bento -->
+    <div class="lg:col-span-2 bg-white p-10 rounded-[3rem] border border-slate-200 shadow-sm">
+        <div class="flex items-center justify-between mb-10">
             <div>
-                <h3 class="text-slate-900 font-extrabold text-xl">Revenue Growth</h3>
-                <p class="text-slate-500 text-sm font-medium">Daily performance tracking</p>
+                <h3 class="text-slate-900 font-black text-2xl tracking-tight">Analitik Pendapatan</h3>
+                <p class="text-slate-400 text-sm font-medium">Memantau tren pertumbuhan bisnis.</p>
             </div>
-            <select class="bg-slate-50 border-none text-slate-600 font-bold text-xs rounded-xl px-4 py-2 focus:ring-2 focus:ring-indigo-500">
-                <option>Last 7 Days</option>
-                <option>Last 30 Days</option>
-            </select>
+            <div class="flex gap-2">
+                <span class="w-3 h-3 bg-brand-primary rounded-full"></span>
+                <span class="w-3 h-3 bg-slate-100 rounded-full"></span>
+            </div>
         </div>
-        <div class="h-[300px]">
+        <div class="h-[320px]">
             <canvas id="revenueChart"></canvas>
         </div>
     </div>
 
-    <!-- Quick Stats & Actions -->
-    <div class="bg-white p-8 rounded-[2rem] border border-slate-200 shadow-sm flex flex-col">
-        <h3 class="text-slate-900 font-extrabold text-xl mb-8">System Metrics</h3>
+    <!-- Staff & Actions Bento -->
+    <div class="bg-white p-10 rounded-[3rem] border border-slate-200 shadow-sm flex flex-col">
+        <h3 class="text-slate-900 font-black text-2xl tracking-tight mb-10">Kontrol Cepat</h3>
         
-        <div class="space-y-6 flex-1">
-            <div class="flex items-center gap-4 p-4 bg-slate-50 rounded-2xl border border-slate-100">
-                <div class="w-12 h-12 bg-white text-indigo-600 rounded-xl flex items-center justify-center shadow-sm">
-                    <i class="bi bi-cup-hot text-xl"></i>
+        <div class="space-y-4 flex-1">
+            <div class="flex items-center gap-4 p-5 bg-slate-50 rounded-[1.5rem] border border-slate-100">
+                <div class="w-14 h-14 bg-white text-brand-primary rounded-2xl flex items-center justify-center shadow-sm">
+                    <i class="bi bi-people-fill text-2xl"></i>
                 </div>
                 <div>
-                    <div class="text-slate-900 font-extrabold text-lg leading-none">{{ $stats['total_menu'] }}</div>
-                    <div class="text-slate-400 text-[10px] font-bold uppercase mt-1">Menu Items</div>
+                    <div class="text-slate-900 font-black text-xl leading-none">{{ $stats['total_kasir'] }}</div>
+                    <div class="text-slate-400 text-[10px] font-black uppercase tracking-widest mt-1">Staff Kasir</div>
                 </div>
             </div>
 
-            <div class="flex items-center gap-4 p-4 bg-slate-50 rounded-2xl border border-slate-100">
-                <div class="w-12 h-12 bg-white text-emerald-600 rounded-xl flex items-center justify-center shadow-sm">
-                    <i class="bi bi-people text-xl"></i>
+            <a href="{{ route('admin.reports.index') }}" class="group flex items-center gap-4 p-5 bg-brand-primary text-brand-secondary rounded-[1.5rem] border border-brand-primary/10 shadow-xl shadow-brand-primary/20 hover:scale-[1.02] transition-all">
+                <div class="w-12 h-12 bg-white/20 text-white rounded-xl flex items-center justify-center">
+                    <i class="bi bi-file-earmark-bar-graph text-xl"></i>
                 </div>
                 <div>
-                    <div class="text-slate-900 font-extrabold text-lg leading-none">{{ $stats['total_kasir'] }}</div>
-                    <div class="text-slate-400 text-[10px] font-bold uppercase mt-1">Staff Cashiers</div>
+                    <div class="font-black text-sm uppercase tracking-wider">Pusat Laporan</div>
+                    <div class="text-white/60 text-[10px] font-bold mt-0.5">Analitik Data Lengkap</div>
                 </div>
-            </div>
+            </a>
         </div>
 
-        <div class="mt-10">
-            <a href="{{ route('admin.reports.index') }}" class="w-full bg-slate-900 text-white font-bold py-4 rounded-2xl flex items-center justify-center gap-2 hover:bg-slate-800 transition-colors shadow-lg shadow-slate-200">
-                Generate Report <i class="bi bi-arrow-right"></i>
-            </a>
+        <div class="mt-12 p-6 bg-brand-accent/10 rounded-2xl text-center border border-brand-accent/20">
+            <p class="text-[10px] text-brand-accent font-black uppercase tracking-[0.2em] mb-2">Dukungan Aktif</p>
+            <p class="text-xs text-brand-accent/80 font-medium">KedaiPOS Ecosystem v1.0</p>
         </div>
     </div>
 </div>
@@ -131,17 +110,17 @@
 <!-- Recent Transactions Table -->
 <div class="bg-white rounded-[2rem] border border-slate-200 shadow-sm overflow-hidden">
     <div class="p-8 border-b border-slate-100 flex items-center justify-between">
-        <h3 class="text-slate-900 font-extrabold text-xl">Recent Transactions</h3>
-        <a href="{{ route('admin.orders.index') }}" class="text-indigo-600 font-bold text-sm hover:underline">View All</a>
+        <h3 class="text-slate-900 font-extrabold text-xl">Transaksi Terbaru</h3>
+        <a href="{{ route('admin.orders.index') }}" class="text-brand-primary font-bold text-sm hover:underline">Lihat Semua</a>
     </div>
     <div class="overflow-x-auto">
         <table class="w-full text-left">
             <thead>
                 <tr class="bg-slate-50">
-                    <th class="px-8 py-4 text-slate-400 text-[10px] font-bold uppercase tracking-widest">Order ID</th>
-                    <th class="px-8 py-4 text-slate-400 text-[10px] font-bold uppercase tracking-widest">Table</th>
+                    <th class="px-8 py-4 text-slate-400 text-[10px] font-bold uppercase tracking-widest">ID Pesanan</th>
+                    <th class="px-8 py-4 text-slate-400 text-[10px] font-bold uppercase tracking-widest">Meja</th>
                     <th class="px-8 py-4 text-slate-400 text-[10px] font-bold uppercase tracking-widest">Status</th>
-                    <th class="px-8 py-4 text-slate-400 text-[10px] font-bold uppercase tracking-widest text-right">Amount</th>
+                    <th class="px-8 py-4 text-slate-400 text-[10px] font-bold uppercase tracking-widest text-right">Total</th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-slate-50">
@@ -159,10 +138,10 @@
                     <td class="px-8 py-5">
                         @php
                             $statusMap = [
-                                'completed' => ['bg-emerald-50', 'text-emerald-600', 'COMPLETED'],
-                                'cancelled' => ['bg-rose-50', 'text-rose-600', 'CANCELLED'],
-                                'ready' => ['bg-sky-50', 'text-sky-600', 'READY'],
-                                'default' => ['bg-amber-50', 'text-amber-600', 'PENDING']
+                                'completed' => ['bg-brand-secondary/10', 'text-brand-primary', 'SELESAI'],
+                                'cancelled' => ['bg-slate-100', 'text-slate-500', 'DIBATALKAN'],
+                                'ready' => ['bg-brand-secondary/10', 'text-brand-primary', 'SIAP'],
+                                'default' => ['bg-brand-secondary/10', 'text-brand-primary', 'PENDING']
                             ];
                             $s = $statusMap[$order->status] ?? $statusMap['default'];
                         @endphp
@@ -176,7 +155,7 @@
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="4" class="px-8 py-10 text-center text-slate-400 font-medium">No transactions recorded today.</td>
+                    <td colspan="4" class="px-8 py-10 text-center text-slate-400 font-medium">Tidak ada transaksi tercatat hari ini.</td>
                 </tr>
                 @endforelse
             </tbody>
@@ -188,24 +167,24 @@
 <script>
     const ctx = document.getElementById('revenueChart').getContext('2d');
     const gradient = ctx.createLinearGradient(0, 0, 0, 400);
-    gradient.addColorStop(0, 'rgba(99, 102, 241, 0.15)');
-    gradient.addColorStop(1, 'rgba(99, 102, 241, 0)');
+    gradient.addColorStop(0, 'rgba(157, 78, 221, 0.15)');
+    gradient.addColorStop(1, 'rgba(157, 78, 221, 0)');
 
     new Chart(ctx, {
         type: 'line',
         data: {
-            labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+            labels: {!! json_encode($chart_data['labels']) !!},
             datasets: [{
-                label: 'Revenue',
-                data: [180000, 260000, 210000, 320000, 280000, 450000, 410000],
-                borderColor: '#6366f1',
+                label: 'Pendapatan',
+                data: {!! json_encode($chart_data['data']) !!},
+                borderColor: '#9D4EDD',
                 backgroundColor: gradient,
                 borderWidth: 4,
                 fill: true,
                 tension: 0.4,
                 pointRadius: 0,
                 pointHoverRadius: 6,
-                pointHoverBackgroundColor: '#6366f1',
+                pointHoverBackgroundColor: '#9D4EDD',
                 pointHoverBorderColor: '#fff',
                 pointHoverBorderWidth: 3
             }]

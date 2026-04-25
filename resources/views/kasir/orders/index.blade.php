@@ -1,118 +1,173 @@
 @extends('layouts.kasir')
 
 @section('title', 'Antrean Pesanan')
-@section('page-title', 'Service Queue')
-@section('page-subtitle', 'Monitor and process active customer orders in real-time.')
+@section('page-title', 'Transactions')
+@section('page-subtitle', 'Monitor dan proses pesanan pelanggan secara real-time.')
+
+@section('topbar-actions')
+<a href="{{ route('kasir.orders.create') }}"
+    class="flex items-center gap-2 px-6 py-3 bg-brand-accent text-white rounded-2xl font-extrabold text-sm hover:opacity-90 active:scale-95 transition-all shadow-lg shadow-brand-accent/20 border border-transparent">
+    <i class="bi bi-plus-circle-fill text-lg"></i> 
+    <span class="hidden sm:inline">Buat Pesanan Baru</span>
+</a>
+@endsection
 
 @section('content')
-<!-- Category/Status Filter -->
-<div class="mb-10 flex flex-col lg:flex-row items-center justify-between gap-8">
-    <div class="flex items-center gap-4 overflow-x-auto no-scrollbar w-full lg:w-auto pb-2">
-        <a href="{{ route('kasir.orders.index') }}" @class([
-            'whitespace-nowrap px-8 py-3 rounded-2xl font-bold text-xs uppercase tracking-widest transition-all',
-            'bg-slate-900 text-white shadow-lg' => !request('status'),
-            'bg-white text-slate-500 border border-slate-100 hover:bg-slate-50' => request('status')
-        ])>Active Queue</a>
-        @foreach(['pending', 'preparing', 'ready'] as $st)
-            <a href="{{ route('kasir.orders.index', ['status' => $st]) }}" @class([
-                'whitespace-nowrap px-8 py-3 rounded-2xl font-bold text-xs uppercase tracking-widest transition-all border',
-                'bg-indigo-600 text-white border-indigo-600 shadow-lg' => request('status') == $st,
-                'bg-white text-slate-500 border-slate-100 hover:bg-slate-50' => request('status') !== $st
-            ])>{{ ucfirst($st) }}</a>
-        @endforeach
-    </div>
-    
-    <div class="hidden lg:flex items-center gap-2 text-slate-400 font-bold text-xs uppercase tracking-widest">
-        <span class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
-        System Connected
+<div class="mb-10 flex flex-col lg:flex-row lg:items-center justify-between gap-4 -mt-4">
+    {{-- Unified Filter Bar (Pill Style) --}}
+    <div class="bg-white p-1.5 rounded-[1.5rem] sm:rounded-full border border-slate-200 shadow-sm flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full max-w-3xl transition-all focus-within:ring-4 focus-within:ring-brand-accent/5 focus-within:border-brand-accent">
+        {{-- Search Section --}}
+        <div class="relative flex-1 group">
+            <i class="bi bi-search absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-brand-accent transition-colors text-sm"></i>
+            <input type="text" id="orderSearch" placeholder="Cari Kode, Nama, atau Meja..." 
+                class="w-full bg-transparent border-none focus:outline-none focus:ring-0 pl-12 pr-4 py-2.5 text-sm font-bold text-slate-900 placeholder:text-slate-300 outline-none">
+        </div>
+
+        {{-- Subtle Divider --}}
+        <div class="w-px h-6 bg-slate-100 hidden sm:block"></div>
+
+        {{-- Status Filter Section --}}
+        <div class="flex items-center gap-1 px-1 py-1 sm:py-0 overflow-x-auto no-scrollbar">
+            <button onclick="filterStatus('all')" data-status-filter="all" class="status-btn flex-none px-6 py-2.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all bg-brand-accent text-white shadow-lg shadow-brand-accent/20">
+                Semua
+            </button>
+            <button onclick="filterStatus('confirmed')" data-status-filter="confirmed" class="status-btn flex-none px-6 py-2.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all text-slate-400 hover:text-slate-600 hover:bg-slate-50">
+                Menunggu Bayar
+            </button>
+            <button onclick="filterStatus('completed')" data-status-filter="completed" class="status-btn flex-none px-6 py-2.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all text-slate-400 hover:text-slate-600 hover:bg-slate-50">
+                Selesai
+            </button>
+        </div>
     </div>
 </div>
 
-<!-- Digital Ticket Feed Grid -->
-<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
-    @forelse($orders as $order)
-    <div class="group bg-white rounded-[2.5rem] border border-slate-200 shadow-sm hover:shadow-2xl transition-all duration-500 overflow-hidden flex flex-col">
-        <!-- Ticket Header -->
-        <div @class([
-            'p-8 flex items-center justify-between border-b',
-            'bg-amber-50/50 border-amber-100' => $order->status == 'pending',
-            'bg-indigo-50/50 border-indigo-100' => $order->status == 'preparing',
-            'bg-emerald-50/50 border-emerald-100' => $order->status == 'ready' || $order->status == 'completed',
-            'bg-slate-50 border-slate-100' => $order->status == 'cancelled'
-        ])>
-            <div>
-                <div class="text-slate-400 text-[10px] font-black uppercase tracking-[0.2em] mb-1">Serving Table</div>
-                <h3 class="text-slate-900 font-black text-2xl tracking-tight">{{ $order->table->nama_meja }}</h3>
-            </div>
-            <div @class([
-                'px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest shadow-sm border',
-                'bg-white text-amber-600 border-amber-100' => $order->status == 'pending',
-                'bg-indigo-600 text-white border-indigo-600' => $order->status == 'preparing',
-                'bg-emerald-600 text-white border-emerald-600' => $order->status == 'ready' || $order->status == 'completed',
-                'text-slate-400 border-slate-200' => $order->status == 'cancelled'
-            ])>
-                {{ strtoupper($order->status) }}
-            </div>
-        </div>
-
-        <!-- Ticket Body -->
-        <div class="p-8 flex-1">
-            <div class="flex justify-between items-start mb-8">
-                <div>
-                    <div class="text-slate-900 font-extrabold text-base mb-1">{{ $order->nama_pelanggan ?? 'Anonymous Guest' }}</div>
-                    <div class="text-slate-400 text-[10px] font-bold uppercase tracking-widest">Ref: #{{ $order->kode_order }}</div>
-                </div>
-                <div class="text-right">
-                    <div class="text-slate-400 text-[10px] font-black uppercase tracking-widest mb-1">Queue Time</div>
-                    <div class="text-slate-700 font-extrabold text-xs">{{ $order->created_at->format('H:i') }}</div>
-                </div>
-            </div>
-
-            <div class="space-y-4 mb-8">
-                <div class="flex items-center justify-between text-sm">
-                    <span class="text-slate-500 font-bold">Items Count</span>
-                    <span class="text-slate-900 font-black">{{ $order->items_count ?? $order->items->count() }} Items</span>
-                </div>
-                <div class="flex items-center justify-between text-sm">
-                    <span class="text-slate-500 font-bold">Order Value</span>
-                    <span class="text-indigo-600 font-black text-lg">{{ $order->formatted_total }}</span>
-                </div>
-            </div>
-
-            @if($order->catatan)
-            <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100 mb-8">
-                <div class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">Guest Request:</div>
-                <p class="text-slate-600 text-xs font-medium italic truncate">"{{ $order->catatan }}"</p>
-            </div>
-            @endif
-        </div>
-
-        <!-- Ticket Actions -->
-        <div class="px-8 py-6 bg-slate-50/50 border-t border-slate-50 flex items-center gap-3">
-            <a href="{{ route('kasir.orders.show', $order) }}" class="flex-1 bg-slate-900 text-white py-4 rounded-2xl font-black text-xs uppercase tracking-widest text-center hover:bg-indigo-600 transition-all shadow-lg shadow-slate-200">
-                Process Service
-            </a>
-        </div>
+<!-- Premium Orders Table -->
+<div class="bg-white rounded-[2rem] border border-slate-200 shadow-sm overflow-hidden transition-all hover:shadow-xl hover:shadow-slate-200/50">
+    <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse min-w-[1000px]">
+            <thead>
+                <tr class="bg-slate-50/50">
+                    <th class="px-8 py-5 text-slate-400 text-[10px] font-black uppercase tracking-[0.2em] border-b border-slate-100">ID Pesanan</th>
+                    <th class="px-8 py-5 text-slate-400 text-[10px] font-black uppercase tracking-[0.2em] border-b border-slate-100">Pelanggan & Meja</th>
+                    <th class="px-8 py-5 text-slate-400 text-[10px] font-black uppercase tracking-[0.2em] border-b border-slate-100">Item</th>
+                    <th class="px-8 py-5 text-slate-400 text-[10px] font-black uppercase tracking-[0.2em] border-b border-slate-100">Total Nilai</th>
+                    <th class="px-8 py-5 text-slate-400 text-[10px] font-black uppercase tracking-[0.2em] border-b border-slate-100">Status</th>
+                    <th class="px-8 py-5 text-slate-400 text-[10px] font-black uppercase tracking-[0.2em] border-b border-slate-100">Waktu</th>
+                    <th class="px-8 py-5 text-slate-400 text-[10px] font-black uppercase tracking-[0.2em] border-b border-slate-100 text-right">Aksi</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-50" id="orderTableBody">
+                @forelse($orders as $order)
+                <tr class="order-row hover:bg-slate-50/50 transition-colors group" 
+                    data-status="{{ $order->status }}" 
+                    data-search="{{ strtolower($order->kode_order . ' ' . $order->nama_pelanggan . ' ' . $order->table->nama_meja) }}">
+                    <td class="px-8 py-5">
+                        <div class="text-slate-900 font-black text-sm tracking-tight">#{{ $order->kode_order }}</div>
+                    </td>
+                    <td class="px-8 py-5">
+                        <div>
+                            <div class="text-slate-900 font-black text-sm tracking-tight leading-tight mb-0.5">{{ $order->nama_pelanggan ?? 'Pelanggan Datang Langsung' }}</div>
+                            <div class="text-brand-accent text-[10px] font-bold uppercase tracking-widest">{{ $order->table->nama_meja }}</div>
+                        </div>
+                    </td>
+                    <td class="px-8 py-5">
+                        <div class="text-slate-600 text-xs font-bold">{{ $order->items->count() }} Items</div>
+                    </td>
+                    <td class="px-8 py-5">
+                        <div class="text-brand-primary font-black text-base">{{ $order->formatted_total }}</div>
+                    </td>
+                    <td class="px-8 py-5">
+                        @php
+                            $statusConfig = [
+                                'confirmed' => ['bg' => 'bg-amber-50', 'text' => 'text-amber-500', 'label' => 'Menunggu Bayar'],
+                                'completed' => ['bg' => 'bg-brand-secondary/10', 'text' => 'text-brand-primary', 'label' => 'Selesai'],
+                                'cancelled' => ['bg' => 'bg-red-50', 'text' => 'text-red-500', 'label' => 'Dibatalkan'],
+                            ];
+                            $cfg = $statusConfig[$order->status] ?? ['bg' => 'bg-slate-50', 'text' => 'text-slate-400', 'label' => $order->status];
+                        @endphp
+                        <span class="inline-flex items-center gap-1.5 px-4 py-2 {{ $cfg['bg'] }} {{ $cfg['text'] }} rounded-full text-[9px] font-black uppercase tracking-widest border border-current/10">
+                            <span class="w-1 h-1 rounded-full bg-current"></span> {{ $cfg['label'] }}
+                        </span>
+                    </td>
+                    <td class="px-8 py-5">
+                        <div class="text-slate-400 text-[11px] font-bold uppercase">{{ $order->created_at->format('H:i') }}</div>
+                    </td>
+                    <td class="px-8 py-5 text-right">
+                        <div class="flex justify-end gap-2">
+                            <a href="{{ route('kasir.orders.show', $order) }}" class="w-10 h-10 bg-white border border-slate-200 text-brand-accent rounded-xl flex items-center justify-center hover:bg-brand-accent hover:text-white hover:border-brand-accent transition-all shadow-sm">
+                                <i class="bi bi-eye-fill"></i>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                @empty
+                <tr>
+                    <td colspan="7" class="py-20 text-center">
+                        <div class="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center text-slate-200 mx-auto mb-4 border border-slate-100">
+                            <i class="bi bi-inbox text-3xl"></i>
+                        </div>
+                        <p class="text-slate-400 font-black text-[10px] uppercase tracking-widest">Tidak ada pesanan ditemukan</p>
+                    </td>
+                </tr>
+                @endforelse
+            </tbody>
+        </table>
     </div>
-    @empty
-    <div class="col-span-full py-32 text-center">
-        <div class="w-24 h-24 bg-slate-100 rounded-full flex items-center justify-center text-slate-300 mx-auto mb-6">
-            <i class="bi bi-cup-hot text-4xl"></i>
-        </div>
-        <h4 class="text-slate-900 font-black text-xl mb-2">Queue is Empty</h4>
-        <p class="text-slate-400 font-medium">All orders have been served and completed.</p>
-    </div>
-    @endforelse
 </div>
 
 @if($orders->hasPages())
-<div class="mt-16">
+<div class="mt-10">
     {{ $orders->links() }}
 </div>
 @endif
+
+@push('scripts')
+<script>
+    // Client-side filtering
+    const orderSearch = document.getElementById('orderSearch');
+    let currentStatusFilter = 'all';
+
+    function applyFilters() {
+        const query = orderSearch.value.toLowerCase();
+        const rows = document.querySelectorAll('.order-row');
+
+        rows.forEach(row => {
+            const searchData = row.dataset.search;
+            const status = row.dataset.status;
+            
+            const matchSearch = searchData.includes(query);
+            const matchStatus = currentStatusFilter === 'all' || status === currentStatusFilter;
+
+            row.classList.toggle('hidden', !(matchSearch && matchStatus));
+        });
+    }
+
+    orderSearch.addEventListener('input', applyFilters);
+
+    window.filterStatus = function(status) {
+        currentStatusFilter = status;
+        
+        document.querySelectorAll('.status-btn').forEach(btn => {
+            if (btn.dataset.statusFilter === status) {
+                btn.classList.add('bg-brand-accent', 'text-white', 'shadow-lg', 'shadow-brand-accent/20');
+                btn.classList.remove('text-slate-400', 'hover:text-slate-600', 'hover:bg-slate-50');
+                btn.style.backgroundColor = 'var(--brand-accent)';
+                btn.style.color = 'white';
+            } else {
+                btn.classList.remove('bg-brand-accent', 'text-white', 'shadow-lg', 'shadow-brand-accent/20');
+                btn.classList.add('text-slate-400', 'hover:text-slate-600', 'hover:bg-slate-50');
+                btn.style.backgroundColor = 'transparent';
+                btn.style.color = '';
+            }
+        });
+
+        applyFilters();
+    }
+</script>
 
 <style>
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 </style>
+@endpush
 @endsection

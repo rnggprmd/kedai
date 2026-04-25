@@ -1,105 +1,113 @@
 @extends('layouts.kasir')
 
-@section('title', 'Service Control')
+@section('title', 'Kontrol Layanan')
 
 @section('content')
-<!-- Kasir Welcome Banner (Tailwind Dark Theme) -->
-<div class="relative overflow-hidden bg-slate-900 rounded-[2rem] p-8 lg:p-12 text-white shadow-2xl mb-10">
-    <div class="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-8">
+<!-- Kasir Welcome Banner (Premium Purple Theme) -->
+<div class="relative overflow-hidden rounded-[2.5rem] p-10 lg:p-14 text-white shadow-2xl mb-12" style="background: linear-gradient(135deg, #240046 0%, #3C096C 100%);">
+    <div class="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-10">
         <div>
-            <h2 class="text-3xl lg:text-5xl font-extrabold tracking-tight mb-4">
-                Good Luck, {{ auth()->user()->name }}! ☕
+            <div class="inline-flex items-center gap-2 px-4 py-1.5 bg-brand-primary/20 border border-brand-primary/30 rounded-full text-[10px] font-black uppercase tracking-widest mb-6">
+                <span class="w-1.5 h-1.5 bg-brand-secondary rounded-full animate-ping"></span> Layanan Langsung Aktif
+            </div>
+            <h2 class="text-4xl lg:text-6xl font-black tracking-tighter mb-4 leading-none">
+                Halo, {{ explode(' ', auth()->user()->name)[0] }}! <span class="text-brand-secondary">.</span>
             </h2>
-            <p class="text-slate-400 text-lg font-medium">
-                Ready to serve your customers with excellence today.
+            <p class="text-white/70 text-lg font-medium max-w-md">
+                Optimalkan layanan Anda dan berikan kepuasan kepada pelanggan hari ini.
             </p>
         </div>
         <div class="flex items-center gap-6">
-            <div class="bg-white/5 backdrop-blur-md rounded-2xl p-5 border border-white/10">
-                <div class="text-slate-500 text-[10px] font-bold uppercase tracking-widest mb-1">Queue Load</div>
-                <div class="flex items-center gap-3">
-                    <div class="w-3 h-3 bg-amber-400 rounded-full shadow-[0_0_10px_#f59e0b]"></div>
-                    <div class="font-extrabold text-2xl">{{ $orders->whereIn('status', ['pending', 'preparing'])->count() }} <span class="text-slate-500 text-sm font-bold">Active</span></div>
+            <div class="bg-white/5 backdrop-blur-xl rounded-[2rem] p-8 border border-white/10 shadow-2xl">
+                <div class="text-slate-500 text-[10px] font-black uppercase tracking-widest mb-3">Antrean Pesanan Langsung</div>
+                <div class="flex items-center gap-4">
+                    <div class="w-4 h-4 bg-brand-secondary rounded-full shadow-[0_0_20px_#FFD60A]"></div>
+                    <div class="font-black text-4xl tracking-tighter">{{ $orders->whereIn('status', ['pending', 'preparing'])->count() }} <span class="text-slate-500 text-sm font-bold uppercase tracking-widest ml-1">Aktif</span></div>
                 </div>
             </div>
         </div>
     </div>
-    <!-- Abstract Background -->
-    <div class="absolute top-0 right-0 w-1/2 h-full bg-indigo-600/10 skew-x-12 transform origin-right"></div>
+    <!-- Abstract Premium Shapes -->
+    <div class="absolute top-0 right-0 w-1/3 h-full bg-brand-primary/5 blur-[120px] rounded-full translate-x-1/2"></div>
+    <div class="absolute bottom-0 left-0 w-1/4 h-full bg-brand-secondary/5 blur-[100px] rounded-full -translate-x-1/2"></div>
 </div>
 
-<div class="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-8 mb-10">
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
     @php
         $kasirStats = [
-            ['label' => 'Pending', 'val' => $orders->where('status', 'pending')->count(), 'color' => 'amber', 'icon' => 'bi-hourglass-split'],
-            ['label' => 'Preparing', 'val' => $orders->where('status', 'preparing')->count(), 'color' => 'sky', 'icon' => 'bi-fire'],
-            ['label' => 'Ready', 'val' => $orders->where('status', 'ready')->count(), 'color' => 'emerald', 'icon' => 'bi-bell-fill'],
-            ['label' => 'Completed', 'val' => $orders->where('status', 'completed')->count(), 'color' => 'indigo', 'icon' => 'bi-cash-stack'],
+            ['label' => 'Masuk', 'val' => $orders->where('status', 'pending')->count(), 'color' => 'bg-amber-500/10 text-amber-500', 'icon' => 'bi-hourglass-split'],
+            ['label' => 'Diproses', 'val' => $orders->where('status', 'preparing')->count(), 'color' => 'bg-brand-primary/10 text-brand-primary', 'icon' => 'bi-fire'],
+            ['label' => 'Siap', 'val' => $orders->where('status', 'ready')->count(), 'color' => 'bg-brand-secondary/10 text-brand-primary', 'icon' => 'bi-bell-fill'],
+            ['label' => 'Pendapatan', 'val' => number_format($orders->where('status', 'completed')->sum('total_harga')/1000, 1) . 'k', 'color' => 'bg-brand-accent/10 text-brand-accent', 'icon' => 'bi-cash-stack'],
         ];
     @endphp
 
     @foreach($kasirStats as $s)
-    @php
-        $colorClasses = [
-            'amber' => 'bg-amber-50 text-amber-600',
-            'sky' => 'bg-sky-50 text-sky-600',
-            'emerald' => 'bg-emerald-50 text-emerald-600',
-            'indigo' => 'bg-indigo-50 text-indigo-600',
-        ];
-        $currentClass = $colorClasses[$s['color']] ?? 'bg-slate-50 text-slate-600';
-    @endphp
-    <div class="bg-white p-6 lg:p-8 rounded-[2rem] border border-slate-200 shadow-sm hover:shadow-xl transition-all duration-300">
-        <div class="flex items-center gap-4 mb-4">
-            <div class="w-12 h-12 {{ $currentClass }} rounded-2xl flex items-center justify-center">
-                <i class="bi {{ $s['icon'] }} text-xl"></i>
+    <div class="bg-white p-8 rounded-[2.5rem] border border-slate-200 shadow-sm hover:shadow-xl transition-all duration-500 group">
+        <div class="flex items-center justify-between mb-6">
+            <div class="w-14 h-14 {{ $s['color'] }} rounded-2xl flex items-center justify-center text-2xl shadow-sm group-hover:scale-110 transition-transform">
+                <i class="bi {{ $s['icon'] }}"></i>
             </div>
-            <div class="text-slate-400 text-[10px] font-bold uppercase tracking-widest">{{ $s['label'] }}</div>
+            <div class="text-slate-300 font-black text-xs uppercase tracking-widest">{{ $s['label'] }}</div>
         </div>
-        <div class="text-slate-900 text-3xl lg:text-4xl font-extrabold tracking-tight">{{ $s['val'] }}</div>
+        <div class="text-slate-900 text-4xl font-black tracking-tighter">{{ $s['val'] }}</div>
     </div>
     @endforeach
 </div>
 
-<div class="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8 mb-10">
-    <!-- Load Chart -->
-    <div class="lg:col-span-2 bg-white p-8 rounded-[2rem] border border-slate-200 shadow-sm">
-        <h3 class="text-slate-900 font-extrabold text-xl mb-8">Workload Intensity</h3>
-        <div class="h-[300px]">
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
+    <!-- Visual Performance Bento -->
+    <div class="lg:col-span-2 bg-white p-10 rounded-[3rem] border border-slate-200 shadow-sm">
+        <div class="flex items-center justify-between mb-10">
+            <div>
+                <h3 class="text-slate-900 font-black text-2xl tracking-tight">Intensitas Layanan</h3>
+                <p class="text-slate-400 text-sm font-medium">Memantau jam puncak pesanan.</p>
+            </div>
+            <div class="flex gap-2">
+                <span class="w-3 h-3 bg-brand-primary rounded-full"></span>
+                <span class="w-3 h-3 bg-slate-100 rounded-full"></span>
+            </div>
+        </div>
+        <div class="h-[320px]">
             <canvas id="loadChart"></canvas>
         </div>
     </div>
 
-    <!-- Rapid Access Actions -->
-    <div class="bg-indigo-600 p-8 rounded-[2rem] text-white shadow-xl flex flex-col">
-        <h3 class="font-extrabold text-xl mb-8">Rapid Access</h3>
-        
-        <div class="space-y-4 flex-1">
-            <a href="{{ route('kasir.orders.index') }}" class="group flex items-center gap-4 p-4 bg-white/10 hover:bg-white/20 rounded-2xl border border-white/10 transition-all">
-                <div class="w-12 h-12 bg-white text-indigo-600 rounded-xl flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform">
-                    <i class="bi bi-receipt text-xl"></i>
-                </div>
-                <div>
-                    <div class="font-extrabold text-sm leading-none">Order Queue</div>
-                    <div class="text-indigo-200 text-[10px] font-bold uppercase mt-1">Manage Service</div>
-                </div>
-            </a>
+    <!-- Quick Action Bento -->
+    <div class="bg-brand-primary p-10 rounded-[3rem] text-white shadow-2xl flex flex-col relative overflow-hidden">
+        <div class="relative z-10">
+            <h3 class="font-black text-2xl tracking-tight mb-8">Aksi Cepat</h3>
+            
+            <div class="space-y-4 flex-1">
+                <a href="{{ route('kasir.orders.create') }}" class="group flex items-center gap-4 p-5 bg-white/10 hover:bg-white rounded-[1.5rem] border border-white/20 hover:border-white transition-all">
+                    <div class="w-12 h-12 bg-brand-secondary text-brand-primary rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                        <i class="bi bi-plus-circle-fill text-xl"></i>
+                    </div>
+                    <div>
+                        <div class="font-black text-sm group-hover:text-slate-900 transition-colors">Buat Pesanan</div>
+                        <div class="text-white/60 group-hover:text-slate-400 text-[10px] font-bold uppercase tracking-widest mt-0.5">Transaksi Baru</div>
+                    </div>
+                </a>
 
-            <a href="{{ route('kasir.menus.index') }}" class="group flex items-center gap-4 p-4 bg-white/10 hover:bg-white/20 rounded-2xl border border-white/10 transition-all">
-                <div class="w-12 h-12 bg-white text-indigo-600 rounded-xl flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform">
-                    <i class="bi bi-book text-xl"></i>
-                </div>
-                <div>
-                    <div class="font-extrabold text-sm leading-none">Menu Catalog</div>
-                    <div class="text-indigo-200 text-[10px] font-bold uppercase mt-1">Check Availability</div>
-                </div>
-            </a>
-        </div>
+                <a href="{{ route('kasir.orders.index') }}" class="group flex items-center gap-4 p-5 bg-white/5 hover:bg-white/10 rounded-[1.5rem] border border-white/10 transition-all">
+                    <div class="w-12 h-12 bg-white/20 text-white rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                        <i class="bi bi-receipt text-xl"></i>
+                    </div>
+                    <div>
+                        <div class="font-black text-sm">Antrean Pesanan</div>
+                        <div class="text-white/60 text-[10px] font-bold uppercase tracking-widest mt-0.5">Kelola Layanan</div>
+                    </div>
+                </a>
+            </div>
 
-        <div class="mt-10 p-4 bg-white/5 rounded-2xl border border-white/5">
-            <p class="text-xs text-indigo-200 font-medium leading-relaxed">
-                <span class="text-white font-bold">Pro Tip:</span> Prioritize pending orders to maintain a smooth kitchen flow.
-            </p>
+            <div class="mt-12 p-6 bg-brand-accent/20 rounded-2xl border border-brand-accent/30 shadow-lg shadow-brand-accent/10">
+                <p class="text-xs text-white font-medium leading-relaxed italic">
+                    "Kecepatan adalah jantung dari keramah-tamahan."
+                </p>
+            </div>
         </div>
+        <!-- Decorative Shape -->
+        <div class="absolute -bottom-20 -right-20 w-48 h-48 bg-white/5 rounded-full blur-3xl"></div>
     </div>
 </div>
 
@@ -109,11 +117,11 @@
     new Chart(ctxLoad, {
         type: 'bar',
         data: {
-            labels: ['10am', '12pm', '2pm', '4pm', '6pm', '8pm', '10pm'],
+            labels: {!! json_encode($hourly_data['labels']) !!},
             datasets: [{
-                label: 'Orders',
-                data: [10, 25, 15, 20, 35, 28, 12],
-                backgroundColor: '#6366f1',
+                label: 'Pesanan',
+                data: {!! json_encode($hourly_data['data']) !!},
+                backgroundColor: '#9D4EDD',
                 borderRadius: 12,
                 barThickness: 24
             }]

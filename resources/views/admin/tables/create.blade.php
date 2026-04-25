@@ -1,8 +1,14 @@
 @extends('layouts.admin')
 
 @section('title', 'Add New Table')
-@section('page-title', 'Create Table')
-@section('page-subtitle', 'Add a new physical table to your restaurant layout.')
+@section('page-title', 'Tambah Meja')
+@section('page-subtitle', 'Tambahkan meja baru ke denah restoran Anda.')
+
+@section('topbar-actions')
+<a href="{{ route('admin.tables.index') }}" class="flex items-center gap-2 px-5 py-2.5 bg-white border border-slate-200 text-slate-600 rounded-xl font-bold text-sm hover:bg-slate-50 transition-all">
+    <i class="bi bi-arrow-left"></i> Kembali
+</a>
+@endsection
 
 @section('content')
 <div class="max-w-2xl">
@@ -14,15 +20,15 @@
                 <!-- Code -->
                 <div>
                     <label class="block text-slate-400 text-[10px] font-bold uppercase tracking-widest mb-3 ml-1">Unique Table Code</label>
-                    <input type="text" name="kode_meja" class="w-full bg-slate-50 border-none rounded-2xl px-5 py-4 font-bold text-slate-900 focus:ring-2 focus:ring-indigo-600 transition-all placeholder:text-slate-300 @error('kode_meja') ring-2 ring-rose-500 @enderror" placeholder="e.g. T-01" value="{{ old('kode_meja') }}" required>
-                    @error('kode_meja') <p class="text-rose-600 text-[10px] font-bold mt-2 ml-1 uppercase tracking-widest">{{ $message }}</p> @enderror
+                    <input type="text" name="kode_meja" class="w-full bg-slate-50 border-none rounded-2xl px-5 py-4 font-bold text-slate-900 focus:ring-2 focus:ring-brand-primary transition-all placeholder:text-slate-300 @error('kode_meja') ring-2 ring-brand-primary @enderror" placeholder="e.g. T-01" value="{{ old('kode_meja') }}" required>
+                    @error('kode_meja') <p class="text-brand-primary text-[10px] font-bold mt-2 ml-1 uppercase tracking-widest">{{ $message }}</p> @enderror
                 </div>
 
                 <!-- Name -->
                 <div>
                     <label class="block text-slate-400 text-[10px] font-bold uppercase tracking-widest mb-3 ml-1">Display Name</label>
-                    <input type="text" name="nama_meja" class="w-full bg-slate-50 border-none rounded-2xl px-5 py-4 font-bold text-slate-900 focus:ring-2 focus:ring-indigo-600 transition-all placeholder:text-slate-300 @error('nama_meja') ring-2 ring-rose-500 @enderror" placeholder="e.g. VIP Area 1" value="{{ old('nama_meja') }}" required>
-                    @error('nama_meja') <p class="text-rose-600 text-[10px] font-bold mt-2 ml-1 uppercase tracking-widest">{{ $message }}</p> @enderror
+                    <input type="text" name="nama_meja" class="w-full bg-slate-50 border-none rounded-2xl px-5 py-4 font-bold text-slate-900 focus:ring-2 focus:ring-brand-primary transition-all placeholder:text-slate-300 @error('nama_meja') ring-2 ring-brand-primary @enderror" placeholder="e.g. VIP Area 1" value="{{ old('nama_meja') }}" required>
+                    @error('nama_meja') <p class="text-brand-primary text-[10px] font-bold mt-2 ml-1 uppercase tracking-widest">{{ $message }}</p> @enderror
                 </div>
             </div>
 
@@ -30,7 +36,7 @@
                 <!-- Capacity -->
                 <div>
                     <label class="block text-slate-400 text-[10px] font-bold uppercase tracking-widest mb-3 ml-1">Seating Capacity</label>
-                    <input type="number" name="kapasitas" class="w-full bg-slate-50 border-none rounded-2xl px-5 py-4 font-bold text-slate-900 focus:ring-2 focus:ring-indigo-600 transition-all" value="{{ old('kapasitas', 2) }}" min="1" required>
+                    <input type="number" name="kapasitas" class="w-full bg-slate-50 border-none rounded-2xl px-5 py-4 font-bold text-slate-900 focus:ring-2 focus:ring-brand-primary transition-all" value="{{ old('kapasitas', 2) }}" min="1" required>
                 </div>
 
                 <!-- Active Status -->
@@ -38,13 +44,13 @@
                     <div class="text-slate-900 font-extrabold text-xs uppercase tracking-tight">Active Status</div>
                     <div class="relative inline-flex items-center cursor-pointer">
                         <input type="checkbox" name="is_active" id="is_active" value="1" checked class="sr-only peer">
-                        <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
+                        <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-primary"></div>
                     </div>
                 </div>
             </div>
 
             <div class="pt-8 border-t border-slate-50 flex flex-col sm:flex-row gap-4">
-                <button type="submit" class="flex-1 bg-indigo-600 text-white font-extrabold py-5 rounded-2xl hover:bg-indigo-700 transition-all shadow-xl shadow-indigo-200">
+                <button type="submit" class="flex-1 bg-brand-primary text-white font-extrabold py-5 rounded-2xl hover:opacity-90 transition-all shadow-xl shadow-brand-primary/10">
                     Save Table
                 </button>
                 <a href="{{ route('admin.tables.index') }}" class="px-10 py-5 bg-slate-100 text-slate-600 font-bold rounded-2xl hover:bg-slate-200 transition-all text-center">

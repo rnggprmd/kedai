@@ -26,6 +26,19 @@ class DashboardController extends Controller
             ->take(10)
             ->get();
 
-        return view('admin.dashboard', compact('stats', 'recent_orders'));
+        // Data for chart: Last 7 days
+        $chart_data = [];
+        for ($i = 6; $i >= 0; $i--) {
+            $date = now()->subDays($i)->toDateString();
+            $label = now()->subDays($i)->format('D');
+            $revenue = Order::whereDate('created_at', $date)
+                ->where('status', 'completed')
+                ->sum('total_harga');
+            
+            $chart_data['labels'][] = $label;
+            $chart_data['data'][] = (int)$revenue;
+        }
+
+        return view('admin.dashboard', compact('stats', 'recent_orders', 'chart_data'));
     }
 }

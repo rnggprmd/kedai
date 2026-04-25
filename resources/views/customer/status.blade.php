@@ -1,6 +1,6 @@
 @extends('layouts.customer')
 
-@section('title', 'Order Status')
+@section('title', 'Status Pesanan')
 
 @section('content')
 <div class="max-w-2xl mx-auto py-10 px-4">
@@ -8,27 +8,27 @@
     <div class="text-center mb-12">
         @php
             $statusConfig = match($order->status) {
-                'pending' => ['icon' => 'bi-clock-history', 'color' => 'amber', 'label' => 'Waiting for Confirmation'],
-                'confirmed' => ['icon' => 'bi-check2-circle', 'color' => 'sky', 'label' => 'Order Confirmed'],
-                'preparing' => ['icon' => 'bi-fire', 'color' => 'rose', 'label' => 'Chef is Cooking'],
-                'ready' => ['icon' => 'bi-bell-fill', 'color' => 'emerald', 'label' => 'Ready to Serve'],
-                'completed' => ['icon' => 'bi-stars', 'color' => 'indigo', 'label' => 'Enjoy your Meal!'],
-                'cancelled' => ['icon' => 'bi-x-circle', 'color' => 'slate', 'label' => 'Order Cancelled'],
+                'pending' => ['icon' => 'bi-clock-history', 'color' => 'amber', 'label' => 'Menunggu Konfirmasi'],
+                'confirmed' => ['icon' => 'bi-check2-circle', 'color' => 'sky', 'label' => 'Pesanan Dikonfirmasi'],
+                'preparing' => ['icon' => 'bi-fire', 'color' => 'rose', 'label' => 'Koki Sedang Memasak'],
+                'ready' => ['icon' => 'bi-bell-fill', 'color' => 'emerald', 'label' => 'Siap Disajikan'],
+                'completed' => ['icon' => 'bi-stars', 'color' => 'brand-primary', 'label' => 'Selamat Menikmati!'],
+                'cancelled' => ['icon' => 'bi-x-circle', 'color' => 'slate', 'label' => 'Pesanan Dibatalkan'],
                 default => ['icon' => 'bi-receipt', 'color' => 'slate', 'label' => $order->status_label]
             };
         @endphp
 
         <!-- Animated Pulse Icon -->
         <div class="relative inline-flex mb-8">
-            <div class="absolute inset-0 bg-{{ $statusConfig['color'] }}-400 rounded-[2.5rem] blur-2xl opacity-20 animate-pulse"></div>
-            <div class="relative w-24 h-24 bg-white rounded-[2rem] shadow-xl border border-{{ $statusConfig['color'] }}-100 flex items-center justify-center text-4xl text-{{ $statusConfig['color'] }}-600">
+            <div class="absolute inset-0 bg-brand-primary rounded-[2.5rem] blur-2xl opacity-10 animate-pulse"></div>
+            <div class="relative w-24 h-24 bg-brand-primary rounded-[2rem] shadow-xl border border-brand-primary/10 flex items-center justify-center text-4xl text-brand-secondary">
                 <i class="bi {{ $statusConfig['icon'] }}"></i>
             </div>
         </div>
 
         <h2 class="text-slate-900 font-extrabold text-3xl tracking-tight mb-2">{{ $statusConfig['label'] }}</h2>
         <div class="inline-flex items-center gap-2 px-4 py-1.5 bg-slate-100 rounded-full text-slate-500 text-[10px] font-bold uppercase tracking-widest">
-            Order #{{ $order->kode_order }}
+            Pesanan #{{ $order->kode_order }}
         </div>
     </div>
 
@@ -52,7 +52,7 @@
                 $isActive = $currentIdx === $index && $order->status != 'completed';
             @endphp
             <div class="relative flex flex-col items-center">
-                <div class="w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-500 border-2 {{ $isActive ? 'bg-indigo-600 border-indigo-600 text-white shadow-lg shadow-indigo-200 scale-125' : ($isCompleted ? 'bg-slate-900 border-slate-900 text-white' : 'bg-white border-slate-100 text-slate-300') }}">
+                <div class="w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-500 border-2 {{ $isActive ? 'bg-brand-primary border-brand-primary text-brand-secondary shadow-lg shadow-brand-primary/20 scale-125' : ($isCompleted ? 'bg-brand-secondary border-brand-secondary text-brand-primary' : 'bg-white border-slate-100 text-slate-300') }}">
                     <i class="bi {{ $step['icon'] }} text-lg"></i>
                 </div>
             </div>
@@ -63,7 +63,7 @@
     <div class="bg-white rounded-[2.5rem] border border-slate-200 shadow-sm overflow-hidden mb-8">
         <div class="p-8 border-b border-slate-50 bg-slate-50/50">
             <h3 class="text-slate-900 font-extrabold text-lg flex items-center gap-3">
-                <i class="bi bi-card-list text-indigo-600"></i> Order Summary
+                <i class="bi bi-card-list text-brand-primary"></i> Ringkasan Pesanan
             </h3>
         </div>
         <div class="p-8 space-y-6">
@@ -73,8 +73,8 @@
                     <div class="text-slate-900 font-bold text-base">{{ $item->nama_menu }}</div>
                     <div class="text-slate-400 text-xs font-medium">{{ $item->jumlah }}x @ {{ number_format($item->harga, 0, ',', '.') }}</div>
                     @if($item->catatan)
-                        <div class="mt-1 text-[10px] text-amber-600 font-bold uppercase tracking-wider bg-amber-50 px-2 py-0.5 rounded inline-block">
-                            Note: {{ $item->catatan }}
+                        <div class="mt-1 text-[10px] text-brand-primary font-bold uppercase tracking-wider bg-brand-secondary px-2 py-0.5 rounded inline-block">
+                            Catatan: {{ $item->catatan }}
                         </div>
                     @endif
                 </div>
@@ -83,7 +83,7 @@
             @endforeach
 
             <div class="pt-6 border-t border-slate-100 flex justify-between items-center">
-                <div class="text-slate-400 text-xs font-bold uppercase tracking-[0.2em]">Total Amount</div>
+                <div class="text-slate-400 text-xs font-bold uppercase tracking-[0.2em]">Total Pembayaran</div>
                 <div class="text-slate-900 font-black text-2xl tracking-tight">{{ $order->formatted_total }}</div>
             </div>
         </div>
@@ -92,11 +92,11 @@
     <!-- Midtrans Payment Button -->
     @if($order->snap_token && !in_array($order->status, ['completed', 'cancelled']))
     <div class="mb-8 animate-in slide-in-from-bottom-5 duration-700">
-        <div class="bg-indigo-50 border border-indigo-100 rounded-[2rem] p-6 text-center">
-            <p class="text-indigo-600 font-bold text-sm mb-4">Secure your order with digital payment</p>
-            <button id="pay-button" class="w-full bg-indigo-600 text-white py-5 rounded-2xl font-black text-lg shadow-xl shadow-indigo-100 hover:bg-indigo-700 transition-all active:scale-95 flex items-center justify-center gap-3">
+        <div class="bg-brand-primary border border-brand-primary/10 rounded-[2rem] p-6 text-center">
+            <p class="text-brand-secondary font-bold text-sm mb-4">Amankan pesanan Anda dengan pembayaran digital</p>
+            <button id="pay-button" class="w-full bg-brand-secondary text-brand-primary py-5 rounded-2xl font-black text-lg shadow-xl shadow-brand-secondary/10 hover:bg-white transition-all active:scale-95 flex items-center justify-center gap-3">
                 <i class="bi bi-wallet2 text-xl"></i> 
-                Pay with Midtrans
+                Bayar dengan Midtrans
             </button>
         </div>
     </div>
@@ -106,20 +106,27 @@
     <div class="text-center flex flex-col items-center gap-4">
         <button onclick="window.location.reload()" class="group inline-flex items-center gap-3 px-8 py-4 bg-white border border-slate-200 rounded-2xl text-slate-600 font-bold text-sm hover:bg-slate-900 hover:text-white hover:border-slate-900 transition-all shadow-sm hover:shadow-xl active:scale-95">
             <i class="bi bi-arrow-clockwise text-lg group-hover:rotate-180 transition-transform duration-500"></i>
-            Refresh Status
+            Perbarui Status
         </button>
         
-        <a href="{{ route('customer.menu', $table->qr_token) }}" class="inline-flex items-center gap-2 text-indigo-600 font-bold text-xs uppercase tracking-widest hover:text-indigo-800 transition-colors">
-            <i class="bi bi-plus-circle"></i> Want to order more?
-        </a>
+        <div class="flex flex-col gap-3 w-full">
+            @if($order->status == 'completed')
+            <a href="{{ route('customer.order.invoice', ['qr_token' => $table->qr_token, 'order' => $order->id]) }}" 
+               class="w-full bg-brand-primary text-brand-secondary py-5 rounded-2xl font-black text-center shadow-xl shadow-brand-primary/10 flex items-center justify-center gap-3 hover:scale-[1.02] transition-all active:scale-95">
+                <i class="bi bi-receipt-cutoff text-xl"></i>
+                Unduh Invoice PDF
+            </a>
+            @endif
+            
+            <a href="{{ route('customer.menu', $table->qr_token) }}" 
+               class="w-full bg-white text-slate-400 py-5 rounded-2xl font-black text-center border-2 border-slate-100 hover:bg-slate-50 transition-all active:scale-95">
+                Kembali ke Menu
+            </a>
+        </div>
 
         <div class="mt-8 pt-8 border-t border-slate-100 w-full flex flex-col items-center gap-4">
-            <a href="{{ route('customer.order.invoice', ['qr_token' => $table->qr_token, 'order' => $order->id]) }}" class="inline-flex items-center gap-2 px-6 py-3 bg-slate-100 text-slate-600 rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-slate-200 transition-all">
-                <i class="bi bi-file-earmark-pdf"></i> Download Invoice
-            </a>
-            
             <p class="text-slate-400 text-[10px] font-bold uppercase tracking-[0.2em]">
-                Auto-checking every 30s • Last update: {{ now()->format('H:i:s') }}
+                Pengecekan otomatis setiap 30 detik • Pembaruan terakhir: {{ now()->format('H:i:s') }}
             </p>
         </div>
     </div>
@@ -157,12 +164,5 @@
 </script>
 
 @push('styles')
-<style>
-    /* Specific dynamic color safelisting just in case JIT missed them */
-    .bg-amber-400 { background-color: #fbbf24; }
-    .bg-rose-400 { background-color: #fb7185; }
-    .bg-emerald-400 { background-color: #34d399; }
-    .bg-sky-400 { background-color: #38bdf8; }
-</style>
 @endpush
 @endsection

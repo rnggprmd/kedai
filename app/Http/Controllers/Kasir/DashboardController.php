@@ -16,6 +16,20 @@ class DashboardController extends Controller
             ->latest()
             ->get();
 
-        return view('kasir.dashboard', compact('orders'));
+        // Data for chart: Hourly intensity for today
+        $hourly_data = [];
+        $hours = ['09:00', '11:00', '13:00', '15:00', '17:00', '19:00', '21:00'];
+        foreach ($hours as $hour) {
+            $h = explode(':', $hour)[0];
+            $count = Order::whereDate('created_at', today())
+                ->whereRaw("HOUR(created_at) >= ?", [$h])
+                ->whereRaw("HOUR(created_at) < ?", [$h + 2])
+                ->count();
+            
+            $hourly_data['labels'][] = $hour;
+            $hourly_data['data'][] = $count;
+        }
+
+        return view('kasir.dashboard', compact('orders', 'hourly_data'));
     }
 }

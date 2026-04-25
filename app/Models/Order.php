@@ -82,10 +82,7 @@ class Order extends Model
     public function getStatusBadgeAttribute(): string
     {
         return match ($this->status) {
-            'pending' => 'warning',
-            'confirmed' => 'info',
-            'preparing' => 'primary',
-            'ready' => 'success',
+            'pending', 'confirmed' => 'warning',
             'completed' => 'success',
             'cancelled' => 'danger',
             default => 'secondary',
@@ -95,10 +92,7 @@ class Order extends Model
     public function getStatusLabelAttribute(): string
     {
         return match ($this->status) {
-            'pending' => 'Menunggu',
-            'confirmed' => 'Dikonfirmasi',
-            'preparing' => 'Diproses',
-            'ready' => 'Siap Saji',
+            'pending', 'confirmed' => 'Menunggu Bayar',
             'completed' => 'Selesai',
             'cancelled' => 'Dibatalkan',
             default => $this->status,

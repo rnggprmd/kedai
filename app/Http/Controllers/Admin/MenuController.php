@@ -18,7 +18,15 @@ class MenuController extends Controller
             $query->where('category_id', $request->category);
         }
 
-        $menus = $query->latest()->paginate(15);
+        if ($request->filled('search')) {
+            $query->where('nama', 'like', '%' . $request->search . '%');
+        }
+
+        if ($request->filled('availability')) {
+            $query->where('is_available', $request->availability);
+        }
+
+        $menus = $query->latest()->paginate(16)->withQueryString();
         $categories = Category::active()->ordered()->get();
         return view('admin.menus.index', compact('menus', 'categories'));
     }
@@ -49,11 +57,7 @@ class MenuController extends Controller
             ->with('success', 'Menu berhasil ditambahkan.');
     }
 
-    public function show(Menu $menu)
-    {
-        $menu->load('category');
-        return view('admin.menus.show', compact('menu'));
-    }
+
 
     public function edit(Menu $menu)
     {

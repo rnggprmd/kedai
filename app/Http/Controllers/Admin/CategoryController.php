@@ -22,10 +22,12 @@ class CategoryController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'nama' => 'required|string|max:100',
-            'urutan' => 'nullable|integer|min:0',
+            'nama'      => 'required|string|max:100',
+            'urutan'    => 'nullable|integer|min:0',
+            'is_active' => 'boolean',
         ]);
 
+        $validated['is_active'] = $request->boolean('is_active');
         Category::create($validated);
 
         return redirect()->route('admin.categories.index')

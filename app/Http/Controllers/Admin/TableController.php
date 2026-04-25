@@ -5,9 +5,21 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Table;
 use Illuminate\Http\Request;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class TableController extends Controller
 {
+    /**
+     * Download QR Sticker as PDF
+     */
+    public function downloadQrPdf(Table $table)
+    {
+        $pdf = Pdf::loadView('admin.tables.qr_pdf', compact('table'))
+                  ->setPaper([0, 0, 450, 600], 'portrait');
+
+        return $pdf->download('QR_' . str_replace(' ', '_', $table->nama_meja) . '.pdf');
+    }
+
     public function index()
     {
         $tables = Table::withCount(['orders' => function ($q) {

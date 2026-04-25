@@ -21,14 +21,18 @@ class MenuController extends Controller
             $query->where('category_id', $request->category);
         }
 
-        $menus = $query->latest()->paginate(16);
+        if ($request->filled('search')) {
+            $query->where('nama', 'like', '%' . $request->search . '%');
+        }
+
+        if ($request->filled('availability')) {
+            $query->where('is_available', $request->availability);
+        }
+
+        $menus = $query->latest()->paginate(16)->withQueryString();
 
         return view('kasir.menus.index', compact('menus', 'categories'));
     }
 
-    public function show(Menu $menu)
-    {
-        $menu->load('category');
-        return view('kasir.menus.show', compact('menu'));
-    }
+
 }

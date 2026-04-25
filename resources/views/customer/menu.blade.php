@@ -5,17 +5,17 @@
     <!-- Section Title & Info -->
     <div class="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-8">
         <div class="max-w-2xl">
-            <h2 class="text-slate-900 font-black text-4xl lg:text-6xl tracking-tight mb-4 leading-tight">Authentic Taste <br><span class="text-indigo-600">Fresh Ingredients.</span></h2>
-            <p class="text-slate-500 font-medium text-lg lg:text-xl">Discover our curated selection of hand-crafted dishes, prepared with passion and served with a smile.</p>
+            <h2 class="text-slate-900 font-black text-4xl lg:text-6xl tracking-tight mb-4 leading-tight">Rasa Otentik <br><span class="text-brand-accent">Bahan Segar.</span></h2>
+            <p class="text-slate-500 font-medium text-lg lg:text-xl">Temukan pilihan hidangan buatan tangan kami, disiapkan dengan penuh semangat dan disajikan dengan senyuman.</p>
         </div>
         <div class="hidden md:flex flex-col items-end gap-3">
-            <div class="flex items-center gap-2 bg-emerald-50 text-emerald-700 px-4 py-2 rounded-2xl border border-emerald-100 shadow-sm">
+            <div class="flex items-center gap-2 bg-brand-primary/10 text-brand-primary px-4 py-2 rounded-2xl border border-brand-primary/20 shadow-sm">
                 <i class="bi bi-clock-fill"></i>
-                <span class="font-bold text-sm">Open: 09:00 - 22:00</span>
+                <span class="font-bold text-sm">Buka: 09:00 - 22:00</span>
             </div>
-            <div class="flex items-center gap-2 bg-indigo-50 text-indigo-700 px-4 py-2 rounded-2xl border border-indigo-100 shadow-sm">
+            <div class="flex items-center gap-2 bg-brand-primary text-brand-secondary px-4 py-2 rounded-2xl border border-brand-primary shadow-sm">
                 <i class="bi bi-geo-alt-fill"></i>
-                <span class="font-bold text-sm">Table {{ $table->nama_meja }}</span>
+                <span class="font-bold text-sm">Meja {{ $table->nama_meja }}</span>
             </div>
         </div>
     </div>
@@ -23,24 +23,24 @@
     <!-- Chef's Recommendations -->
     <div class="mb-16">
         <div class="flex items-center gap-3 mb-8">
-            <div class="w-12 h-1 bg-indigo-600 rounded-full"></div>
-            <h3 class="text-slate-900 font-black text-lg uppercase tracking-widest">Recommended for You</h3>
+            <div class="w-12 h-1 bg-brand-secondary rounded-full"></div>
+            <h3 class="text-slate-900 font-black text-lg uppercase tracking-widest">Direkomendasikan untuk Anda</h3>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
             @php $featured = $categories->first()->menus->take(2); @endphp
             @foreach($featured as $menu)
-            <div class="group relative bg-slate-900 rounded-[2.5rem] overflow-hidden h-[280px] flex items-end p-8 lg:p-10 hover:shadow-2xl hover:shadow-indigo-100 transition-all duration-500">
+            <div class="group relative bg-brand-primary rounded-[2.5rem] overflow-hidden h-[280px] flex items-end p-8 lg:p-10 hover:shadow-2xl hover:shadow-brand-secondary/10 transition-all duration-500">
                 <img src="{{ $menu->gambar ? Storage::url($menu->gambar) : 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=800' }}" 
                      class="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:scale-110 transition-transform duration-1000">
                 <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent"></div>
                 <div class="relative z-10 w-full flex justify-between items-end gap-6">
                     <div class="flex-1">
-                        <span class="px-3 py-1 bg-indigo-600 text-white text-[9px] font-black uppercase tracking-widest rounded-full mb-3 inline-block">Best Seller</span>
+                        <span class="px-3 py-1 bg-brand-secondary text-brand-primary text-[9px] font-black uppercase tracking-widest rounded-full mb-3 inline-block">Terlaris</span>
                         <h4 class="text-white font-black text-2xl lg:text-3xl mb-1 leading-tight">{{ $menu->nama }}</h4>
-                        <p class="text-indigo-400 font-black text-lg">{{ $menu->formatted_harga }}</p>
+                        <p class="text-brand-secondary font-black text-lg">{{ $menu->formatted_harga }}</p>
                     </div>
                     @if($menu->is_available)
-                    <button onclick='addToCart(@json($menu))' class="w-14 h-14 bg-white text-slate-900 rounded-2xl flex-shrink-0 flex items-center justify-center hover:bg-indigo-600 hover:text-white transition-all shadow-xl active:scale-90">
+                    <button onclick='addToCart(@json($menu))' class="w-14 h-14 bg-brand-secondary text-brand-primary rounded-2xl flex-shrink-0 flex items-center justify-center hover:bg-white transition-all shadow-xl active:scale-90">
                         <i class="bi bi-plus-lg text-2xl"></i>
                     </button>
                     @endif
@@ -54,7 +54,7 @@
     <div class="sticky top-16 z-40 -mx-6 px-6 bg-white border-b border-slate-100 mb-10 py-4 flex flex-col gap-4 shadow-sm">
         <div class="flex items-center gap-3 overflow-x-auto no-scrollbar pb-1">
             @foreach($categories as $category)
-            <a href="#category-{{ $category->id }}" class="category-nav-link whitespace-nowrap px-6 py-2.5 rounded-full bg-slate-100 text-slate-500 font-bold text-[10px] uppercase tracking-widest hover:bg-indigo-600 hover:text-white transition-all duration-300">
+            <a href="#category-{{ $category->id }}" class="category-nav-link whitespace-nowrap px-6 py-2.5 rounded-full bg-slate-100 text-slate-500 font-bold text-[10px] uppercase tracking-widest hover:bg-brand-primary hover:text-brand-secondary transition-all duration-300">
                 {{ $category->nama }}
             </a>
             @endforeach
@@ -62,8 +62,8 @@
         
         <div class="relative group">
             <i class="bi bi-search absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
-            <input type="text" id="menu-search" placeholder="Search for something delicious..." 
-                class="w-full bg-slate-100 border-none rounded-2xl pl-12 pr-5 py-4 text-sm font-bold text-slate-900 focus:ring-2 focus:ring-indigo-600 transition-all placeholder:text-slate-400">
+            <input type="text" id="menu-search" placeholder="Cari sesuatu yang lezat..." 
+                class="w-full bg-slate-100 border-none rounded-2xl pl-12 pr-5 py-4 text-sm font-bold text-slate-900 focus:ring-2 focus:ring-brand-primary transition-all placeholder:text-slate-400">
         </div>
     </div>
 
@@ -73,10 +73,10 @@
         <section id="category-{{ $category->id }}" class="scroll-mt-52 category-section">
             <div class="flex items-center justify-between mb-8">
                 <h2 class="text-slate-900 font-black text-2xl tracking-tight flex items-center gap-3">
-                    <span class="w-2 h-8 bg-indigo-600 rounded-full"></span>
+                    <span class="w-2 h-8 bg-brand-secondary rounded-full"></span>
                     {{ $category->nama }}
                 </h2>
-                <span class="bg-slate-100 text-slate-400 px-4 py-1.5 rounded-full font-bold text-[10px] uppercase tracking-widest">{{ $category->menus->count() }} Items</span>
+                <span class="bg-slate-100 text-slate-400 px-4 py-1.5 rounded-full font-bold text-[10px] uppercase tracking-widest">{{ $category->menus->count() }} Item</span>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6">
@@ -87,19 +87,19 @@
                         : 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400';
                 @endphp
                 @foreach($category->menus as $menu)
-                <div class="menu-item group bg-white rounded-[2.5rem] border border-slate-100 shadow-sm hover:shadow-xl hover:border-indigo-100 transition-all duration-500 flex items-center p-5 gap-6 relative min-h-[140px] {{ !$menu->is_available ? 'opacity-60 grayscale-[0.5]' : '' }}" 
+                <div class="menu-item group bg-white rounded-[2.5rem] border border-slate-100 shadow-sm hover:shadow-xl hover:border-brand-secondary/30 transition-all duration-500 flex items-center p-5 gap-6 relative min-h-[140px] {{ !$menu->is_available ? 'opacity-60 grayscale-[0.5]' : '' }}" 
                      data-name="{{ strtolower($menu->nama) }}">
                     
                     <!-- Info (Left) -->
                     <div class="flex-1 min-w-0">
-                        <h3 class="text-slate-900 font-black text-lg truncate mb-1 group-hover:text-indigo-600 transition-colors">{{ $menu->nama }}</h3>
-                        <p class="text-slate-400 text-[11px] font-medium leading-relaxed line-clamp-2 mb-4">{{ $menu->deskripsi ?? 'No description available for this delicious dish.' }}</p>
+                        <h3 class="text-slate-900 font-black text-lg truncate mb-1 group-hover:text-brand-accent transition-colors">{{ $menu->nama }}</h3>
+                        <p class="text-slate-400 text-[11px] font-medium leading-relaxed line-clamp-2 mb-4">{{ $menu->deskripsi ?? 'Tidak ada deskripsi tersedia untuk hidangan lezat ini.' }}</p>
                         
                         <div class="flex items-center justify-between">
-                            <span class="text-indigo-600 font-black text-lg">{{ $menu->formatted_harga }}</span>
+                            <span class="text-brand-primary font-black text-lg">{{ $menu->formatted_harga }}</span>
                             
                             @if($menu->is_available)
-                            <button onclick='addToCart(@json($menu))' class="w-10 h-10 bg-slate-900 text-white rounded-xl flex items-center justify-center hover:bg-indigo-600 hover:scale-110 transition-all active:scale-90 shadow-lg">
+                            <button onclick='addToCart(@json($menu))' class="w-10 h-10 bg-brand-primary text-brand-secondary rounded-xl flex items-center justify-center hover:bg-brand-accent hover:text-white hover:scale-110 transition-all active:scale-90 shadow-lg shadow-brand-primary/10">
                                 <i class="bi bi-plus text-xl"></i>
                             </button>
                             @endif
@@ -112,7 +112,7 @@
                              class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
                         @if(!$menu->is_available)
                         <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-[1px] flex items-center justify-center">
-                            <span class="text-white font-black text-[9px] uppercase tracking-widest -rotate-12 border border-white/40 px-2 py-1 rounded">Sold Out</span>
+                            <span class="text-white font-black text-[9px] uppercase tracking-widest -rotate-12 border border-white/40 px-2 py-1 rounded">Habis</span>
                         </div>
                         @endif
                     </div>
@@ -125,21 +125,21 @@
 
     <!-- Floating Checkout Pill (Solid & High Contrast) -->
     <div id="cart-pill" class="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 hidden animate-in slide-in-from-bottom-10 duration-500 w-full max-w-md px-6">
-        <button onclick="toggleCart()" class="w-full bg-indigo-600 border border-indigo-400 text-white px-8 py-5 rounded-3xl shadow-[0_20px_50px_rgba(79,70,229,0.4)] flex items-center justify-between group hover:scale-[1.02] transition-all active:scale-95" style="background-color: #4f46e5 !important;">
+        <button onclick="toggleCart()" class="w-full bg-brand-primary border border-brand-primary/20 text-white px-8 py-5 rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.3)] flex items-center justify-between group hover:scale-[1.02] transition-all active:scale-95" style="background-color: var(--brand-primary) !important;">
             <div class="flex items-center gap-4">
                 <div class="relative">
-                    <i class="bi bi-bag-fill text-2xl text-white"></i>
-                    <span id="cart-count" class="absolute -top-2 -right-2 w-6 h-6 bg-rose-500 text-white text-[10px] font-black rounded-full flex items-center justify-center border-2 border-indigo-600">0</span>
+                    <i class="bi bi-bag-fill text-2xl text-brand-secondary"></i>
+                    <span id="cart-count" class="absolute -top-2 -right-2 w-6 h-6 bg-brand-accent text-white text-[10px] font-black rounded-full flex items-center justify-center border-2 border-brand-primary">0</span>
                 </div>
                 <div class="text-left">
-                    <div class="text-[10px] font-black text-indigo-100 uppercase tracking-widest leading-none mb-1">Total Order</div>
-                    <div id="cart-total" class="font-black text-xl text-white leading-none">Rp 0</div>
+                    <div class="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Total Pesanan</div>
+                    <div id="cart-total" class="font-black text-xl text-brand-secondary leading-none">Rp 0</div>
                 </div>
             </div>
             <div class="flex items-center gap-3">
                 <div class="h-8 w-px bg-white/20"></div>
-                <span class="font-black text-xs text-white uppercase tracking-widest flex items-center gap-2">
-                    Review Order <i class="bi bi-chevron-right group-hover:translate-x-1 transition-transform"></i>
+                <span class="font-black text-xs text-brand-secondary uppercase tracking-widest flex items-center gap-2">
+                    Tinjau Pesanan <i class="bi bi-chevron-right group-hover:translate-x-1 transition-transform"></i>
                 </span>
             </div>
         </button>
@@ -155,10 +155,10 @@
             <!-- Modal Header (Sticky) -->
             <div class="px-6 py-5 lg:px-10 lg:py-8 border-b border-slate-100 flex items-center justify-between bg-white z-20">
                 <div>
-                    <h2 class="text-slate-900 font-black text-xl lg:text-2xl tracking-tight">Your Order</h2>
-                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Review your choices</p>
+                    <h2 class="text-slate-900 font-black text-xl lg:text-2xl tracking-tight">Pesanan Anda</h2>
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Tinjau pilihan Anda</p>
                 </div>
-                <button onclick="toggleCart()" class="w-10 h-10 lg:w-12 lg:h-12 bg-slate-50 rounded-2xl flex items-center justify-center text-slate-400 hover:text-rose-500 hover:bg-rose-50 transition-all border border-slate-100">
+                <button onclick="toggleCart()" class="w-10 h-10 lg:w-12 lg:h-12 bg-slate-50 rounded-2xl flex items-center justify-center text-slate-400 hover:text-brand-accent hover:bg-slate-100 transition-all border border-slate-100">
                     <i class="bi bi-x-lg text-lg"></i>
                 </button>
             </div>
@@ -178,15 +178,15 @@
                         
                         <div class="space-y-4">
                             <div>
-                                <label class="block text-[11px] font-black text-slate-900 uppercase tracking-[0.2em] mb-3 ml-1">Customer Details</label>
-                                <input type="text" name="nama_pelanggan" placeholder="Your Name (Optional)" 
-                                    class="w-full bg-slate-50 border-slate-200 rounded-2xl px-6 py-4 font-bold text-slate-900 focus:ring-2 focus:ring-indigo-600 focus:bg-white transition-all placeholder:text-slate-400 border-none ring-1 ring-slate-200">
+                                <label class="block text-[11px] font-black text-slate-900 uppercase tracking-[0.2em] mb-3 ml-1">Detail Pelanggan</label>
+                                <input type="text" name="nama_pelanggan" placeholder="Nama Anda (Opsional)" 
+                                    class="w-full bg-slate-50 border-slate-200 rounded-2xl px-6 py-4 font-bold text-slate-900 focus:ring-2 focus:ring-brand-primary focus:bg-white transition-all placeholder:text-slate-400 border-none ring-1 ring-slate-200">
                             </div>
                             
                             <div>
-                                <label class="block text-[11px] font-black text-slate-900 uppercase tracking-[0.2em] mb-3 ml-1">Kitchen Notes</label>
-                                <textarea name="catatan" placeholder="Any special requests? (Optional)" rows="2"
-                                    class="w-full bg-slate-50 border-slate-200 rounded-2xl px-6 py-4 font-bold text-slate-900 focus:ring-2 focus:ring-indigo-600 focus:bg-white transition-all placeholder:text-slate-400 border-none ring-1 ring-slate-200"></textarea>
+                                <label class="block text-[11px] font-black text-slate-900 uppercase tracking-[0.2em] mb-3 ml-1">Catatan Dapur</label>
+                                <textarea name="catatan" placeholder="Ada permintaan khusus? (Opsional)" rows="2"
+                                    class="w-full bg-slate-50 border-slate-200 rounded-2xl px-6 py-4 font-bold text-slate-900 focus:ring-2 focus:ring-brand-primary focus:bg-white transition-all placeholder:text-slate-400 border-none ring-1 ring-slate-200"></textarea>
                             </div>
                         </div>
                     </form>
@@ -200,10 +200,10 @@
             <div class="absolute bottom-0 left-0 right-0 p-6 bg-white border-t border-slate-100 z-30 shadow-[0_-10px_40px_rgba(0,0,0,0.03)]">
                 <div class="max-w-md mx-auto grid grid-cols-2 gap-3">
                     <button type="button" onclick="toggleCart()" class="order-1 py-4 bg-slate-100 text-slate-500 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-slate-200 transition-all active:scale-95">
-                        Back
+                        Kembali
                     </button>
-                    <button type="submit" form="order-form" id="submit-btn" class="order-2 py-4 bg-indigo-600 text-white rounded-2xl font-black text-xs uppercase tracking-[0.15em] shadow-lg shadow-indigo-100 hover:bg-indigo-700 transition-all active:scale-95 flex items-center justify-center gap-2">
-                        <span>Confirm</span>
+                    <button type="submit" form="order-form" id="submit-btn" class="order-2 py-4 bg-brand-primary text-brand-secondary rounded-2xl font-black text-xs uppercase tracking-[0.15em] shadow-lg shadow-brand-primary/10 hover:opacity-90 transition-all active:scale-95 flex items-center justify-center gap-2">
+                        <span>Konfirmasi Pesanan</span>
                         <i class="bi bi-send-fill text-sm"></i>
                     </button>
                 </div>
@@ -220,7 +220,7 @@
         const existing = cart.find(i => i.id === menu.id);
         if (existing) {
             if (existing.qty >= 50) {
-                showToast('Maximum 50 items per menu', 'rose');
+                showToast('Maksimal 50 item per menu', 'rose');
                 return;
             }
             existing.qty++;
@@ -230,7 +230,7 @@
         updateCartUI();
         
         // Show premium feedback
-        showToast(`${menu.nama} added to cart!`);
+        showToast(`${menu.nama} ditambahkan ke keranjang!`);
     }
 
     function toggleCart() {
@@ -275,7 +275,7 @@
         if (cart.length === 0) {
             container.innerHTML = `<div class="h-full flex flex-col items-center justify-center text-center py-20">
                 <i class="bi bi-cart-x text-6xl text-slate-100 mb-4"></i>
-                <p class="text-slate-400 font-bold uppercase tracking-widest text-sm">Your cart is empty</p>
+                <p class="text-slate-400 font-bold uppercase tracking-widest text-sm">Keranjang Anda kosong</p>
             </div>`;
             return;
         }
@@ -285,14 +285,14 @@
                 <img src="${item.gambar ? '/storage/' + item.gambar : 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=200'}" class="w-20 h-20 rounded-2xl object-cover shadow-sm">
                 <div class="flex-1">
                     <h4 class="text-slate-900 font-extrabold text-base mb-1">${item.nama}</h4>
-                    <p class="text-indigo-600 font-black text-sm">Rp ${(item.harga * item.qty).toLocaleString('id-ID')}</p>
+                    <p class="text-brand-accent font-black text-sm">Rp ${(item.harga * item.qty).toLocaleString('id-ID')}</p>
                 </div>
                 <div class="flex items-center bg-slate-100 rounded-xl p-1 gap-2 border border-slate-200">
-                    <button onclick="changeQty(${item.id}, -1)" class="w-8 h-8 flex items-center justify-center bg-white rounded-lg shadow-sm text-slate-600 hover:text-rose-500 transition-colors">
+                    <button onclick="changeQty(${item.id}, -1)" class="w-8 h-8 flex items-center justify-center bg-white rounded-lg shadow-sm text-slate-600 hover:text-brand-accent transition-colors">
                         <i class="bi bi-dash-lg"></i>
                     </button>
                     <span class="w-8 text-center font-black text-slate-900">${item.qty}</span>
-                    <button onclick="changeQty(${item.id}, 1)" class="w-8 h-8 flex items-center justify-center bg-white rounded-lg shadow-sm text-slate-600 hover:text-indigo-600 transition-colors">
+                    <button onclick="changeQty(${item.id}, 1)" class="w-8 h-8 flex items-center justify-center bg-white rounded-lg shadow-sm text-slate-600 hover:text-brand-primary transition-colors">
                         <i class="bi bi-plus-lg"></i>
                     </button>
                 </div>
@@ -304,7 +304,7 @@
         const item = cart.find(i => i.id === id);
         if (item) {
             if (delta > 0 && item.qty >= 50) {
-                showToast('Maximum 50 items per menu', 'rose');
+                showToast('Maksimal 50 item per menu', 'rose');
                 return;
             }
             item.qty += delta;
@@ -372,10 +372,10 @@
                 navLinks.forEach(link => {
                     if (link.getAttribute('href') === `#${id}`) {
                         link.classList.remove('bg-slate-100', 'text-slate-600');
-                        link.classList.add('bg-indigo-600', 'text-white', 'shadow-lg', 'shadow-indigo-100');
+                        link.classList.add('bg-brand-primary', 'text-brand-secondary', 'shadow-lg', 'shadow-brand-primary/20');
                     } else {
                         link.classList.add('bg-slate-100', 'text-slate-600');
-                        link.classList.remove('bg-indigo-600', 'text-white', 'shadow-lg', 'shadow-indigo-100');
+                        link.classList.remove('bg-brand-primary', 'text-brand-secondary', 'shadow-lg', 'shadow-brand-primary/20');
                     }
                 });
             }
