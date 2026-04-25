@@ -33,9 +33,9 @@
     </div>
 
     {{-- Quick Action Button --}}
-    <button onclick="openCreateModal()" class="w-full lg:w-auto bg-brand-primary text-white px-8 py-3.5 rounded-full font-black text-xs uppercase tracking-widest hover:opacity-90 active:scale-95 transition-all shadow-xl shadow-brand-primary/20 flex items-center justify-center gap-3 shrink-0">
+    <button onclick="openCreateModal()" class="w-full lg:w-auto bg-brand-primary text-brand-secondary px-8 py-3.5 rounded-full font-black text-[10px] uppercase tracking-widest hover:opacity-90 active:scale-95 transition-all shadow-xl shadow-brand-primary/20 flex items-center justify-center gap-3 shrink-0">
         <i class="bi bi-person-plus-fill text-lg"></i>
-        Tambah Staff
+        <span>Tambah Staff</span>
     </button>
 </div>
 

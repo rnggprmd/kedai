@@ -9,10 +9,8 @@
         @php
             $statusConfig = match($order->status) {
                 'pending' => ['icon' => 'bi-clock-history', 'color' => 'amber', 'label' => 'Menunggu Konfirmasi'],
-                'confirmed' => ['icon' => 'bi-check2-circle', 'color' => 'sky', 'label' => 'Pesanan Dikonfirmasi'],
-                'preparing' => ['icon' => 'bi-fire', 'color' => 'rose', 'label' => 'Koki Sedang Memasak'],
-                'ready' => ['icon' => 'bi-bell-fill', 'color' => 'emerald', 'label' => 'Siap Disajikan'],
-                'completed' => ['icon' => 'bi-stars', 'color' => 'brand-primary', 'label' => 'Selamat Menikmati!'],
+                'confirmed' => ['icon' => 'bi-receipt-cutoff', 'color' => 'sky', 'label' => 'Tagihan Siap Bayar'],
+                'completed' => ['icon' => 'bi-stars', 'color' => 'brand-primary', 'label' => 'Transaksi Selesai'],
                 'cancelled' => ['icon' => 'bi-x-circle', 'color' => 'slate', 'label' => 'Pesanan Dibatalkan'],
                 default => ['icon' => 'bi-receipt', 'color' => 'slate', 'label' => $order->status_label]
             };
@@ -38,12 +36,11 @@
         @php
             $steps = [
                 ['st' => 'pending', 'icon' => 'bi-receipt'],
-                ['st' => 'preparing', 'icon' => 'bi-fire'],
-                ['st' => 'ready', 'icon' => 'bi-bell'],
+                ['st' => 'confirmed', 'icon' => 'bi-wallet2'],
                 ['st' => 'completed', 'icon' => 'bi-check-all']
             ];
             $currentIdx = array_search($order->status, array_column($steps, 'st'));
-            if($order->status == 'confirmed') $currentIdx = 0; // Confirmed is still early
+            if($order->status == 'preparing' || $order->status == 'ready') $currentIdx = 1; // Legacy handling
         @endphp
 
         @foreach($steps as $index => $step)

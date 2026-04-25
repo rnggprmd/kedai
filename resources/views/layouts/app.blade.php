@@ -17,12 +17,31 @@
     
     <style>
         body { font-family: 'Outfit', sans-serif; }
-        /* Smooth scroll for the whole page */
         html { scroll-behavior: smooth; }
-        /* Custom scrollbar for sidebar */
-        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 10px; }
+        
+        /* Global Premium Scrollbar (Browser & Containers) */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { 
+            background: rgba(30, 30, 30, 0.15); 
+            border-radius: 20px; 
+            border: 2px solid transparent; 
+            background-clip: content-box; 
+        }
+        ::-webkit-scrollbar-thumb:hover { 
+            background: rgba(30, 30, 30, 0.3); 
+        }
+
+        /* Sidebar Navigation (Force Dark Contrast) */
+        .custom-scrollbar::-webkit-scrollbar-thumb { 
+            background: rgba(255, 255, 255, 0.2); 
+            border-radius: 20px; 
+            border: 2px solid transparent; 
+            background-clip: content-box; 
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { 
+            background: rgba(255, 255, 255, 0.4); 
+        }
     </style>
     @stack('styles')
 </head>

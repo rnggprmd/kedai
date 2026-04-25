@@ -5,7 +5,7 @@
 @section('page-subtitle', 'Kelola katalog makanan dan minuman secara visual.')
 
 @section('content')
-<div class="mb-10 flex flex-row items-center justify-between gap-4 -mt-4">
+<div class="mb-10 flex flex-row items-center justify-between gap-4">
     {{-- Unified Filter Bar (Shrinkable & Scrollable) --}}
     <div class="bg-white p-1.5 rounded-full border border-slate-200 shadow-sm flex flex-row items-center gap-2 flex-1 min-w-0 transition-all focus-within:ring-4 focus-within:ring-brand-accent/5 focus-within:border-brand-accent">
         {{-- Search Section --}}
@@ -84,7 +84,7 @@
         
         <!-- Image Header -->
         <div class="relative h-56 overflow-hidden bg-slate-50">
-            <img src="{{ $menu->gambar ? Storage::url($menu->gambar) : 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=500' }}" 
+            <img src="{{ $menu->gambar_url }}" 
                  id="img-{{ $menu->id }}"
                  class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000">
             
@@ -111,7 +111,7 @@
                     'harga' => $menu->harga,
                     'deskripsi' => $menu->deskripsi,
                     'is_available' => $menu->is_available,
-                    'gambar_url' => $menu->gambar ? Storage::url($menu->gambar) : null
+                    'gambar_url' => $menu->gambar_url
                 ]) }})" class="w-12 h-12 bg-white text-brand-accent rounded-2xl flex items-center justify-center hover:bg-brand-accent hover:text-white transition-all shadow-xl scale-90 group-hover:scale-100 duration-300">
                     <i class="bi bi-pencil-square text-lg"></i>
                 </button>
@@ -221,8 +221,8 @@
             </form>
         </div>
         <div class="p-8 border-t border-slate-50 bg-slate-50/50">
-            <button type="submit" form="menuForm" class="w-full bg-brand-accent text-white font-black py-4 rounded-2xl hover:opacity-90 transition-all shadow-xl shadow-brand-accent/20 text-[10px] uppercase tracking-[0.2em]">
-                Simpan Menu
+            <button type="submit" form="menuForm" class="w-full bg-brand-primary text-brand-secondary font-black py-4 rounded-2xl hover:opacity-90 transition-all shadow-xl shadow-brand-primary/20 text-[10px] uppercase tracking-[0.2em]">
+                <i class="bi bi-check2-circle text-base"></i> Simpan Menu
             </button>
         </div>
     </div>

@@ -74,7 +74,7 @@
     <div class="group bg-white rounded-[2.5rem] border border-slate-200 shadow-sm hover:shadow-2xl transition-all duration-500 overflow-hidden flex flex-col">
         <!-- Image Header -->
         <div class="relative h-56 overflow-hidden bg-slate-50">
-            <img src="{{ $menu->gambar ? Storage::url($menu->gambar) : 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=500' }}" 
+            <img src="{{ $menu->gambar_url }}" 
                  class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000">
             <div class="absolute top-5 left-5">
                 <span class="px-4 py-1.5 bg-white/90 backdrop-blur-md rounded-full text-[10px] font-black uppercase tracking-widest text-slate-900 shadow-sm">
@@ -108,7 +108,7 @@
                     'harga' => $menu->formatted_harga,
                     'deskripsi' => $menu->deskripsi,
                     'is_available' => $menu->is_available,
-                    'gambar_url' => $menu->gambar ? Storage::url($menu->gambar) : 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=500'
+                    'gambar_url' => $menu->gambar_url
                 ]) }})" class="w-12 h-12 bg-white border border-slate-200 text-slate-400 rounded-xl flex items-center justify-center hover:bg-brand-accent hover:text-white hover:border-brand-accent transition-all shadow-sm group/btn">
                     <i class="bi bi-eye-fill"></i>
                 </button>

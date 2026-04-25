@@ -46,7 +46,7 @@
                 <span class="text-sm">Kategori</span>
             </a>
             <a href="{{ route('admin.menus.index') }}" class="flex items-center gap-3 px-4 py-3 rounded-2xl transition-all duration-200 {{ request()->routeIs('admin.menus.*') ? 'bg-white text-brand-accent shadow-xl font-black' : 'text-white/80 hover:bg-brand-accent/20 hover:text-white' }}">
-                <i class="bi bi-cup-hot-fill text-lg"></i>
+                <i class="bi bi-journal-text text-lg"></i>
                 <span class="text-sm">Katalog Menu</span>
             </a>
         </div>

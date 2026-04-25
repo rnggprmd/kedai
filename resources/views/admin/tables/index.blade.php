@@ -33,9 +33,9 @@
     </div>
 
     {{-- Quick Action Button --}}
-    <button onclick="openCreateModal()" class="w-full lg:w-auto bg-brand-primary text-white px-8 py-3.5 rounded-full font-black text-xs uppercase tracking-widest hover:opacity-90 active:scale-95 transition-all shadow-xl shadow-brand-primary/20 flex items-center justify-center gap-3 shrink-0">
+    <button onclick="openCreateModal()" class="w-full lg:w-auto bg-brand-primary text-brand-secondary px-8 py-3.5 rounded-full font-black text-[10px] uppercase tracking-widest hover:opacity-90 active:scale-95 transition-all shadow-xl shadow-brand-primary/20 flex items-center justify-center gap-3 shrink-0">
         <i class="bi bi-plus-circle-fill text-lg"></i>
-        Tambah Meja
+        <span>Tambah Meja</span>
     </button>
 </div>
 
@@ -346,11 +346,4 @@
 </script>
 @endpush
 
-<style>
-    .custom-scrollbar::-webkit-scrollbar { width: 6px; }
-    .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-    .custom-scrollbar::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
-    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #cbd5e1; }
-</style>
 @endsection
-

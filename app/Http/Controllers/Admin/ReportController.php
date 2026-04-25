@@ -63,7 +63,7 @@ class ReportController extends Controller
         // Metode pembayaran
         $paymentMethods = Payment::where('status', 'paid')
             ->whereBetween('created_at', [$startDate, $endDate . ' 23:59:59'])
-            ->select('metode', DB::raw('COUNT(*) as jumlah'), DB::raw('SUM(jumlah_bayar) as total'))
+            ->select('metode', DB::raw('COUNT(*) as jumlah'), DB::raw('SUM(jumlah_bayar - jumlah_kembali) as total'))
             ->groupBy('metode')
             ->get();
 

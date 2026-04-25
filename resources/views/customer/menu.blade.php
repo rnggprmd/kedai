@@ -30,7 +30,7 @@
             @php $featured = $categories->first()->menus->take(2); @endphp
             @foreach($featured as $menu)
             <div class="group relative bg-brand-primary rounded-[2.5rem] overflow-hidden h-[280px] flex items-end p-8 lg:p-10 hover:shadow-2xl hover:shadow-brand-secondary/10 transition-all duration-500">
-                <img src="{{ $menu->gambar ? Storage::url($menu->gambar) : 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=800' }}" 
+                <img src="{{ $menu->gambar_url }}" 
                      class="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:scale-110 transition-transform duration-1000">
                 <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent"></div>
                 <div class="relative z-10 w-full flex justify-between items-end gap-6">
@@ -108,7 +108,7 @@
 
                     <!-- Image (Right) - Balanced Size -->
                     <div class="relative w-24 h-24 lg:w-28 lg:h-28 flex-shrink-0 rounded-[1.5rem] overflow-hidden bg-slate-50 shadow-inner order-last">
-                        <img src="{{ $menu->gambar ? Storage::url($menu->gambar) : $fallback }}" 
+                        <img src="{{ $menu->gambar_url }}" 
                              class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
                         @if(!$menu->is_available)
                         <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-[1px] flex items-center justify-center">
@@ -356,39 +356,55 @@
         });
     });
 
-    // Scroll-Sync Category Logic
-    const observerOptions = {
-        root: null,
-        rootMargin: '-10% 0px -80% 0px',
-        threshold: 0
-    };
-
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                const id = entry.target.getAttribute('id');
-                const navLinks = document.querySelectorAll('.category-nav-link');
-                
-                navLinks.forEach(link => {
-                    if (link.getAttribute('href') === `#${id}`) {
-                        link.classList.remove('bg-slate-100', 'text-slate-600');
-                        link.classList.add('bg-brand-primary', 'text-brand-secondary', 'shadow-lg', 'shadow-brand-primary/20');
-                    } else {
-                        link.classList.add('bg-slate-100', 'text-slate-600');
-                        link.classList.remove('bg-brand-primary', 'text-brand-secondary', 'shadow-lg', 'shadow-brand-primary/20');
-                    }
-                });
+    // Scroll-Sync Category Logic (Traditional Scroll Spy)
+    window.addEventListener('scroll', () => {
+        let current = '';
+        const sections = document.querySelectorAll('.category-section');
+        
+        sections.forEach(section => {
+            // Calculate top position minus the sticky header height + some padding
+            const sectionTop = section.offsetTop;
+            if (window.scrollY >= (sectionTop - 200)) {
+                current = section.getAttribute('id');
             }
         });
-    }, observerOptions);
 
-    document.querySelectorAll('.category-section').forEach(section => {
-        observer.observe(section);
+        if (!current) return;
+
+        const navLinks = document.querySelectorAll('.category-nav-link');
+        navLinks.forEach(link => {
+            // Reset to default
+            link.classList.remove('bg-brand-primary', 'text-brand-secondary', 'shadow-lg', 'shadow-brand-primary/20');
+            link.classList.add('bg-slate-100', 'text-slate-500');
+            
+            // Set active
+            if (link.getAttribute('href') === `#${current}`) {
+                link.classList.remove('bg-slate-100', 'text-slate-500');
+                link.classList.add('bg-brand-primary', 'text-brand-secondary', 'shadow-lg', 'shadow-brand-primary/20');
+                
+                // Only scroll into view if the user is scrolling the page, prevent infinite scroll loops
+                // by using a very gentle inline scroll
+                link.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+            }
+        });
+    });
+
+    // Also add immediate click response
+    document.querySelectorAll('.category-nav-link').forEach(link => {
+        link.addEventListener('click', function(e) {
+            document.querySelectorAll('.category-nav-link').forEach(l => {
+                l.classList.remove('bg-brand-primary', 'text-brand-secondary', 'shadow-lg', 'shadow-brand-primary/20');
+                l.classList.add('bg-slate-100', 'text-slate-500');
+            });
+            this.classList.remove('bg-slate-100', 'text-slate-500');
+            this.classList.add('bg-brand-primary', 'text-brand-secondary', 'shadow-lg', 'shadow-brand-primary/20');
+        });
     });
 </script>
 @endpush
 
 <style>
+    html { scroll-behavior: smooth; }
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     .scroll-mt-40 { scroll-margin-top: 10rem; }

@@ -31,7 +31,7 @@ class OrderController extends Controller
             $query->where('status', $request->status);
         }
 
-        $orders = $query->latest()->paginate(20);
+        $orders = $query->latest()->take(300)->get();
 
         return view('kasir.orders.index', compact('orders'));
     }

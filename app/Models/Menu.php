@@ -52,4 +52,17 @@ class Menu extends Model
     {
         return 'Rp ' . number_format($this->harga, 0, ',', '.');
     }
+
+    public function getGambarUrlAttribute(): string
+    {
+        if (empty($this->gambar)) {
+            return 'https://ui-avatars.com/api/?name=' . urlencode($this->nama) . '&background=random&size=512';
+        }
+
+        if (filter_var($this->gambar, FILTER_VALIDATE_URL)) {
+            return $this->gambar;
+        }
+
+        return asset('storage/' . $this->gambar);
+    }
 }

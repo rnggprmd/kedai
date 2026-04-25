@@ -60,6 +60,14 @@ class OrderController extends Controller
             'items.*.catatan' => 'nullable|string|max:255',
         ]);
 
+        // Cek ketersediaan stok/status menu sebelum diproses
+        foreach ($request->items as $item) {
+            $menu = Menu::find($item['menu_id']);
+            if (!$menu || !$menu->is_available) {
+                return back()->with('error', 'Mohon maaf, menu ' . ($menu->nama ?? 'pilihan Anda') . ' saat ini sedang habis. Silakan perbarui pesanan Anda.')->withInput();
+            }
+        }
+
         return \Illuminate\Support\Facades\DB::transaction(function () use ($request, $table, $qr_token) {
             // Buat order
             $order = Order::create([
@@ -119,6 +127,32 @@ class OrderController extends Controller
 
         // Pastikan order milik meja ini
         abort_unless($order->table_id === $table->id, 404);
+
+        // Jika status masih belum lunas, coba cek status ke Midtrans (Direct Check)
+        // Ini sangat berguna jika Webhook terhambat atau testing di localhost
+        if (!in_array($order->status, ['completed', 'cancelled'])) {
+            try {
+                $status = \Midtrans\Transaction::status($order->kode_order);
+                
+                if ($status->transaction_status == 'settlement' || $status->transaction_status == 'capture') {
+                    $order->update(['status' => 'completed']);
+                    
+                    // Buat record payment jika belum ada
+                    if (!\App\Models\Payment::where('order_id', $order->id)->exists()) {
+                        \App\Models\Payment::create([
+                            'order_id' => $order->id,
+                            'metode' => 'qris',
+                            'jumlah_bayar' => $order->total_harga,
+                            'jumlah_kembali' => 0,
+                            'status' => 'paid',
+                            'midtrans_transaction_id' => $status->transaction_id,
+                        ]);
+                    }
+                }
+            } catch (\Exception $e) {
+                // Abaikan jika transaksi belum dibuat di Midtrans atau error koneksi
+            }
+        }
 
         $order->load('items');
 

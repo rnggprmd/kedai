@@ -12,7 +12,7 @@ class DashboardController extends Controller
         // Fetch orders for the dashboard (today's orders and active orders)
         $orders = Order::with(['table', 'items'])
             ->whereDate('created_at', today())
-            ->orWhereIn('status', ['pending', 'confirmed', 'preparing', 'ready'])
+            ->orWhereIn('status', ['pending', 'confirmed'])
             ->latest()
             ->get();
 
@@ -30,6 +30,13 @@ class DashboardController extends Controller
             $hourly_data['data'][] = $count;
         }
 
-        return view('kasir.dashboard', compact('orders', 'hourly_data'));
+        // Recent orders for table
+        $recent_orders = Order::with('table')
+            ->whereDate('created_at', today())
+            ->latest()
+            ->take(10)
+            ->get();
+
+        return view('kasir.dashboard', compact('orders', 'hourly_data', 'recent_orders'));
     }
 }

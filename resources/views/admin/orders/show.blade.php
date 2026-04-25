@@ -49,11 +49,16 @@
                 {{-- Status Badge --}}
                 @php
                     $statusStyles = [
-                        'confirmed' => 'bg-amber-500 text-white shadow-amber-500/20',
+                        'pending'   => 'bg-amber-100 text-amber-600 shadow-amber-100/20',
+                        'confirmed' => 'bg-sky-500 text-white shadow-sky-500/20',
                         'completed' => 'bg-brand-secondary text-brand-primary shadow-brand-secondary/20',
                         'cancelled' => 'bg-slate-400 text-white shadow-slate-400/20',
                     ];
-                    $label = $order->status == 'confirmed' ? 'MENUNGGU BAYAR' : strtoupper($order->status);
+                    $label = match($order->status) {
+                        'pending'   => 'MENUNGGU KONFIRMASI',
+                        'confirmed' => 'MENUNGGU BAYAR',
+                        default     => strtoupper($order->status)
+                    };
                     $style = $statusStyles[$order->status] ?? 'bg-slate-200';
                 @endphp
                 <div class="px-6 py-2.5 rounded-full {{ $style }} text-[10px] font-black uppercase tracking-widest shadow-lg flex items-center gap-2">
@@ -146,8 +151,12 @@
                                 <span class="text-slate-900 font-black text-[10px] uppercase">{{ $order->payment->metode }}</span>
                             </div>
                             <div class="flex items-center justify-between px-4 py-2.5 bg-slate-50 rounded-xl border border-slate-100">
-                                <span class="text-slate-400 text-[8px] font-black uppercase tracking-widest">Total Bayar</span>
+                                <span class="text-slate-400 text-[8px] font-black uppercase tracking-widest">Tunai Diterima</span>
                                 <span class="text-brand-primary font-black text-[10px]">Rp {{ number_format($order->payment->jumlah_bayar, 0, ',', '.') }}</span>
+                            </div>
+                            <div class="flex items-center justify-between px-4 py-2.5 bg-brand-primary/10 rounded-xl border border-brand-primary/20">
+                                <span class="text-brand-primary text-[8px] font-black uppercase tracking-widest">Kembalian</span>
+                                <span class="text-brand-primary font-black text-[12px]">Rp {{ number_format($order->payment->jumlah_kembali, 0, ',', '.') }}</span>
                             </div>
                             <div class="flex items-center justify-between px-4 py-2.5 bg-slate-50 rounded-xl border border-slate-100">
                                 <span class="text-slate-400 text-[8px] font-black uppercase tracking-widest">Waktu</span>

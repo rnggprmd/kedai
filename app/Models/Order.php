@@ -27,8 +27,15 @@ class Order extends Model
     {
         static::creating(function (Order $order) {
             if (empty($order->kode_order)) {
+                $lastOrder = static::whereDate('created_at', today())->latest('id')->first();
+                $lastSequence = 0;
+                
+                if ($lastOrder && preg_match('/-(\d+)$/', $lastOrder->kode_order, $matches)) {
+                    $lastSequence = (int) $matches[1];
+                }
+
                 $order->kode_order = 'ORD-' . now()->format('Ymd') . '-' . str_pad(
-                    static::whereDate('created_at', today())->count() + 1,
+                    $lastSequence + 1,
                     3,
                     '0',
                     STR_PAD_LEFT
@@ -92,10 +99,11 @@ class Order extends Model
     public function getStatusLabelAttribute(): string
     {
         return match ($this->status) {
-            'pending', 'confirmed' => 'Menunggu Bayar',
+            'pending'   => 'Menunggu Konfirmasi',
+            'confirmed' => 'Menunggu Bayar',
             'completed' => 'Selesai',
             'cancelled' => 'Dibatalkan',
-            default => $this->status,
+            default     => $this->status,
         };
     }
 }

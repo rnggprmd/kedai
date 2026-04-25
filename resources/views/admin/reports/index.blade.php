@@ -33,8 +33,8 @@
         </form>
     </div>
     
-    <button onclick="window.print()" class="bg-brand-primary text-white px-8 py-3.5 rounded-full font-black text-[10px] uppercase tracking-widest hover:opacity-90 active:scale-95 transition-all shadow-xl shadow-brand-primary/20 flex items-center justify-center gap-3 shrink-0">
-        <i class="bi bi-printer-fill text-lg"></i> Export PDF
+    <button onclick="window.print()" class="bg-brand-primary text-brand-secondary px-8 py-3.5 rounded-full font-black text-[10px] uppercase tracking-widest hover:opacity-90 active:scale-95 transition-all shadow-xl shadow-brand-primary/20 flex items-center justify-center gap-3 shrink-0">
+        <i class="bi bi-printer-fill text-lg"></i> <span>Export PDF</span>
     </button>
 </div>
 

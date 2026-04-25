@@ -49,11 +49,16 @@
                 {{-- Status Badge --}}
                 @php
                     $statusStyles = [
-                        'confirmed' => 'bg-amber-500 text-white shadow-amber-500/20',
+                        'pending'   => 'bg-amber-100 text-amber-600 shadow-amber-100/20',
+                        'confirmed' => 'bg-sky-500 text-white shadow-sky-500/20',
                         'completed' => 'bg-brand-secondary text-brand-primary shadow-brand-secondary/20',
                         'cancelled' => 'bg-slate-400 text-white shadow-slate-400/20',
                     ];
-                    $label = $order->status == 'confirmed' ? 'MENUNGGU BAYAR' : strtoupper($order->status);
+                    $label = match($order->status) {
+                        'pending'   => 'MENUNGGU KONFIRMASI',
+                        'confirmed' => 'MENUNGGU BAYAR',
+                        default     => strtoupper($order->status)
+                    };
                     $style = $statusStyles[$order->status] ?? 'bg-slate-200';
                 @endphp
                 <div class="px-6 py-2.5 rounded-full {{ $style }} text-[10px] font-black uppercase tracking-widest shadow-lg flex items-center gap-2">
@@ -167,6 +172,16 @@
                 @else
                     <form id="payForm" action="{{ route('kasir.orders.pay', $order) }}" method="POST" class="space-y-4">
                         @csrf
+                        
+                        @if($order->status == 'pending')
+                            <div class="mb-6 p-4 bg-sky-50 rounded-2xl border border-sky-100 animate-pulse">
+                                <p class="text-sky-600 text-[10px] font-black uppercase tracking-widest text-center mb-3">Pesanan Baru dari Meja!</p>
+                                <button type="button" onclick="document.getElementById('confirmForm').submit()" class="w-full bg-sky-500 text-white font-black py-3 rounded-xl hover:bg-sky-600 transition-all shadow-lg shadow-sky-500/20 flex items-center justify-center gap-2 text-[10px] uppercase tracking-widest">
+                                    <i class="bi bi-check2-circle"></i> Konfirmasi Pesanan
+                                </button>
+                            </div>
+                        @endif
+
                         <h4 class="text-slate-900 font-black text-sm tracking-tight mb-4">Proses Pembayaran</h4>
                         
                         @if($errors->any())
@@ -210,6 +225,10 @@
                         <button type="button" onclick="if(confirm('Batalkan pesanan ini?')) document.getElementById('cancelForm').submit()" class="w-full text-slate-300 font-black py-1.5 rounded-lg hover:text-red-500 transition-all text-[8px] uppercase tracking-[0.2em]">
                             Batalkan Pesanan
                         </button>
+                    </form>
+                    <form id="confirmForm" action="{{ route('kasir.orders.updateStatus', $order) }}" method="POST" class="hidden">
+                        @csrf @method('PATCH')
+                        <input type="hidden" name="status" value="confirmed">
                     </form>
                     <form id="cancelForm" action="{{ route('kasir.orders.updateStatus', $order) }}" method="POST" class="hidden">
                         @csrf @method('PATCH')

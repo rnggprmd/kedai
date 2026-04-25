@@ -5,15 +5,10 @@
 @section('page-subtitle', 'Monitor dan proses pesanan pelanggan secara real-time.')
 
 @section('topbar-actions')
-<a href="{{ route('kasir.orders.create') }}"
-    class="flex items-center gap-2 px-6 py-3 bg-brand-accent text-white rounded-2xl font-extrabold text-sm hover:opacity-90 active:scale-95 transition-all shadow-lg shadow-brand-accent/20 border border-transparent">
-    <i class="bi bi-plus-circle-fill text-lg"></i> 
-    <span class="hidden sm:inline">Buat Pesanan Baru</span>
-</a>
 @endsection
 
 @section('content')
-<div class="mb-10 flex flex-col lg:flex-row lg:items-center justify-between gap-4 -mt-4">
+<div class="mb-10 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
     {{-- Unified Filter Bar (Pill Style) --}}
     <div class="bg-white p-1.5 rounded-[1.5rem] sm:rounded-full border border-slate-200 shadow-sm flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full max-w-3xl transition-all focus-within:ring-4 focus-within:ring-brand-accent/5 focus-within:border-brand-accent">
         {{-- Search Section --}}
@@ -39,6 +34,12 @@
             </button>
         </div>
     </div>
+    
+    {{-- Quick Action Button --}}
+    <a href="{{ route('kasir.orders.create') }}" class="w-full lg:w-auto bg-brand-primary text-brand-secondary px-8 py-3.5 rounded-full font-black text-[10px] uppercase tracking-widest hover:opacity-90 active:scale-95 transition-all shadow-xl shadow-brand-primary/20 flex items-center justify-center gap-3 shrink-0">
+        <i class="bi bi-plus-circle-fill text-lg"></i>
+        <span>Buat Pesanan Baru</span>
+    </a>
 </div>
 
 <!-- Premium Orders Table -->
@@ -115,11 +116,6 @@
     </div>
 </div>
 
-@if($orders->hasPages())
-<div class="mt-10">
-    {{ $orders->links() }}
-</div>
-@endif
 
 @push('scripts')
 <script>

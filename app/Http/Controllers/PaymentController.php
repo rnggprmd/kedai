@@ -47,18 +47,14 @@ class PaymentController extends Controller
                 if ($fraud == 'challenge') {
                     $order->update(['status' => 'pending']);
                 } else {
-                    $order->update(['status' => 'confirmed']);
+                    $this->markAsPaid($order, $type, $transaction);
                 }
             }
         } else if ($transaction == 'settlement') {
-            $order->update(['status' => 'confirmed']);
+            $this->markAsPaid($order, $type, $transaction);
         } else if ($transaction == 'pending') {
             $order->update(['status' => 'pending']);
-        } else if ($transaction == 'deny') {
-            $order->update(['status' => 'cancelled']);
-        } else if ($transaction == 'expire') {
-            $order->update(['status' => 'cancelled']);
-        } else if ($transaction == 'cancel') {
+        } else if ($transaction == 'deny' || $transaction == 'expire' || $transaction == 'cancel') {
             $order->update(['status' => 'cancelled']);
         }
 
@@ -66,5 +62,22 @@ class PaymentController extends Controller
             'status' => 'success',
             'message' => 'Notification processed',
         ]);
+    }
+
+    private function markAsPaid(Order $order, $paymentType, $transactionId)
+    {
+        $order->update(['status' => 'completed']);
+        
+        // Buat record payment jika belum ada (mencegah duplikasi webhook)
+        if (!\App\Models\Payment::where('order_id', $order->id)->exists()) {
+            \App\Models\Payment::create([
+                'order_id' => $order->id,
+                'metode' => 'qris', // Umumkan midtrans sebagai qris/non-tunai di DB
+                'jumlah_bayar' => $order->total_harga,
+                'jumlah_kembali' => 0,
+                'status' => 'paid',
+                'midtrans_transaction_id' => $transactionId,
+            ]);
+        }
     }
 }

@@ -96,6 +96,11 @@ class MenuController extends Controller
 
     public function destroy(Menu $menu)
     {
+        // Cek apakah menu sudah pernah dipesan
+        if (\App\Models\OrderItem::where('menu_id', $menu->id)->exists()) {
+            return back()->with('error', 'Menu tidak bisa dihapus karena sudah memiliki riwayat pesanan. Silakan nonaktifkan saja menu ini.');
+        }
+
         if ($menu->gambar) {
             Storage::disk('public')->delete($menu->gambar);
         }

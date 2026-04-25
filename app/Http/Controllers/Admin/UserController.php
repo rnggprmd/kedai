@@ -67,6 +67,11 @@ class UserController extends Controller
             return back()->with('error', 'Tidak bisa menghapus akun sendiri.');
         }
 
+        // Cek apakah user sudah pernah memproses pesanan
+        if (\App\Models\Order::where('kasir_id', $user->id)->exists()) {
+            return back()->with('error', 'Pengguna tidak bisa dihapus karena sudah memiliki riwayat transaksi. Silakan nonaktifkan saja akun ini.');
+        }
+
         $user->delete();
 
         return redirect()->route('admin.users.index')
