@@ -85,6 +85,7 @@ Route::prefix('admin')
 
         // Laporan
         Route::get('reports', [ReportController::class, 'index'])->name('reports.index');
+        Route::get('reports/export-pdf', [ReportController::class, 'exportPdf'])->name('reports.exportPdf');
 
         // Kelola Pengguna
         Route::resource('users', UserController::class);

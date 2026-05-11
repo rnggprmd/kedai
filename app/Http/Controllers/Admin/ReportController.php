@@ -12,6 +12,23 @@ class ReportController extends Controller
 {
     public function index(Request $request)
     {
+        $data = $this->getReportData($request);
+
+        return view('admin.reports.index', $data);
+    }
+
+    public function exportPdf(Request $request)
+    {
+        $data = $this->getReportData($request);
+        
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('admin.reports.pdf', $data)
+            ->setPaper('a4', 'portrait');
+
+        return $pdf->download('Laporan-Penjualan-' . $data['startDate'] . '-to-' . $data['endDate'] . '.pdf');
+    }
+
+    private function getReportData(Request $request)
+    {
         $startDate = $request->input('from', now()->startOfMonth()->toDateString());
         $endDate = $request->input('to', now()->toDateString());
 
@@ -67,9 +84,13 @@ class ReportController extends Controller
             ->groupBy('metode')
             ->get();
 
-        return view('admin.reports.index', compact(
-            'summary', 'daily', 'popular_menus', 'paymentMethods',
-            'startDate', 'endDate'
-        ));
+        return [
+            'summary' => $summary,
+            'daily' => $daily,
+            'popular_menus' => $popular_menus,
+            'paymentMethods' => $paymentMethods,
+            'startDate' => $startDate,
+            'endDate' => $endDate,
+        ];
     }
 }
