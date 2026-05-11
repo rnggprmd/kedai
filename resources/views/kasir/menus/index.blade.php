@@ -5,7 +5,7 @@
 @section('page-subtitle', 'Daftar makanan dan minuman yang tersedia untuk dipesan.')
 
 @section('content')
-<div class="mb-10 flex flex-row items-center justify-between gap-4 -mt-4">
+<div class="mb-10 flex flex-row items-center justify-between gap-4 -mt-4 lg:-mt-6">
     {{-- Unified Filter Bar (Aligned with Grid) --}}
     <div class="bg-white p-1.5 rounded-full border border-slate-200 shadow-sm flex flex-row items-center gap-2 flex-1 min-w-0 transition-all focus-within:ring-4 focus-within:ring-brand-accent/5 focus-within:border-brand-accent">
         {{-- Search Section --}}
@@ -69,7 +69,7 @@
 </div>
 
 <!-- Premium Product Grid -->
-<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
     @foreach($menus as $menu)
     <div class="group bg-white rounded-[2.5rem] border border-slate-200 shadow-sm hover:shadow-2xl transition-all duration-500 overflow-hidden flex flex-col">
         <!-- Image Header -->
@@ -87,7 +87,7 @@
                     'bg-brand-secondary text-white border-brand-secondary shadow-lg shadow-brand-secondary/20' => $menu->is_available,
                     'bg-slate-400 text-white border-slate-300 shadow-lg shadow-slate-400/20' => !$menu->is_available
                 ])>
-                    {{ $menu->is_available ? 'Available' : 'Sold Out' }}
+                    {{ $menu->is_available ? 'Tersedia' : 'Habis' }}
                 </div>
             </div>
         </div>
@@ -147,7 +147,7 @@
                     <span id="qvHarga" class="text-brand-primary font-black text-2xl tracking-tight">Rp 0</span>
                 </div>
                 <div id="qvStatus" class="px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest border">
-                    Available
+                    Tersedia
                 </div>
             </div>
             <div class="bg-slate-50 p-6 rounded-2xl border border-slate-100">
@@ -174,10 +174,10 @@
         
         const statusDiv = document.getElementById('qvStatus');
         if(data.is_available) {
-            statusDiv.innerText = 'AVAILABLE';
+            statusDiv.innerText = 'TERSEDIA';
             statusDiv.className = 'px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest bg-brand-secondary/10 text-brand-secondary border-brand-secondary/20';
         } else {
-            statusDiv.innerText = 'SOLD OUT';
+            statusDiv.innerText = 'HABIS';
             statusDiv.className = 'px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest bg-slate-100 text-slate-400 border-slate-200';
         }
 

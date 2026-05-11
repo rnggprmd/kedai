@@ -11,7 +11,7 @@
 @endsection
 
 @section('content')
-<div class="max-w-2xl">
+<div class="max-w-3xl mx-auto -mt-4 lg:-mt-6">
     <div class="bg-white p-8 lg:p-10 rounded-[2rem] border border-slate-200 shadow-sm">
 
         {{-- Error Summary --}}

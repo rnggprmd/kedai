@@ -15,7 +15,7 @@
 @csrf
 
 {{-- Main Container - High Fidelity POS Layout --}}
-<div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-start -mt-8">
+<div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-start -mt-4 lg:-mt-6">
 
     {{-- ==================== SISI KIRI (2/3): PILIH MENU ==================== --}}
     <div class="md:col-span-7 lg:col-span-8 flex flex-col gap-6">
@@ -57,14 +57,8 @@
                 onclick="addToCart(this)">
                 
                 <div class="aspect-square bg-slate-50 relative overflow-hidden">
-                    @if($menu->gambar)
-                        <img src="{{ asset('storage/' . $menu->gambar) }}" alt="{{ $menu->nama }}"
-                            class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
-                    @else
-                        <div class="w-full h-full flex items-center justify-center text-slate-200">
-                            <i class="bi bi-cup-hot-fill text-4xl"></i>
-                        </div>
-                    @endif
+                    <img src="{{ $menu->gambar_url }}" alt="{{ $menu->nama }}"
+                        class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
                     <div class="absolute inset-0 bg-brand-primary/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
                 </div>
 
@@ -114,7 +108,7 @@
                     </div>
                     <input type="text" name="nama_pelanggan" placeholder="Nama Pelanggan (Walk-in)"
                         class="w-full bg-white border border-slate-200 rounded-lg px-4 py-2.5 font-bold text-slate-900 placeholder-slate-300 focus:ring-4 focus:ring-brand-primary/5 focus:border-brand-primary transition-all text-xs outline-none">
-                    <textarea name="catatan" rows="2" placeholder="Catatan ke dapur..."
+                    <textarea name="catatan" rows="2" placeholder="Catatan"
                         class="w-full bg-white border border-slate-200 rounded-lg px-4 py-2.5 font-bold text-slate-900 placeholder-slate-300 focus:ring-4 focus:ring-brand-primary/5 focus:border-brand-primary transition-all resize-none text-xs outline-none"></textarea>
                 </div>
             </div>

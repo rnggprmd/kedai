@@ -11,7 +11,7 @@
 @endsection
 
 @section('content')
-<div class="max-w-6xl mx-auto">
+<div class="max-w-6xl mx-auto -mt-4 lg:-mt-6">
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch">
         
         <!-- Left Column: The QR Sticker -->

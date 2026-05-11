@@ -8,7 +8,7 @@
 @endsection
 
 @section('content')
-<div class="mb-10 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+<div class="-mt-4 lg:-mt-6 mb-10 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
     {{-- Unified Filter Bar (Pill Style) --}}
     <div class="bg-white p-1.5 rounded-[1.5rem] sm:rounded-full border border-slate-200 shadow-sm flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full max-w-3xl transition-all focus-within:ring-4 focus-within:ring-brand-accent/5 focus-within:border-brand-accent">
         {{-- Search Section --}}

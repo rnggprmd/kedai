@@ -5,21 +5,21 @@
 @section('page-subtitle', 'Rincian transaksi dan riwayat pesanan pelanggan.')
 
 @section('topbar-actions')
-<div class="flex items-center gap-3">
+<div class="flex items-center gap-2 lg:gap-3">
     @if($order->status == 'completed')
     <a href="{{ route('customer.order.invoice', ['qr_token' => $order->table->qr_token, 'order' => $order->id]) }}" 
-        class="bg-white text-slate-400 px-6 py-2.5 rounded-full font-black text-[10px] uppercase tracking-widest hover:text-brand-accent transition-all shadow-sm border border-slate-100 flex items-center gap-2">
-        <i class="bi bi-printer-fill"></i> Invoice
+        class="bg-white text-slate-400 px-3 lg:px-6 py-2 lg:py-2.5 rounded-full font-black text-[9px] lg:text-[10px] uppercase tracking-widest hover:text-brand-accent transition-all shadow-sm border border-slate-100 flex items-center gap-1.5 lg:gap-2">
+        <i class="bi bi-printer-fill"></i> <span class="hidden xs:block">Invoice</span>
     </a>
     @endif
-    <a href="{{ route('admin.orders.index') }}" class="bg-white text-slate-400 px-6 py-2.5 rounded-full font-black text-[10px] uppercase tracking-widest hover:text-brand-primary transition-all shadow-sm border border-slate-100 flex items-center gap-2">
-        <i class="bi bi-arrow-left"></i> Kembali
+    <a href="{{ route('admin.orders.index') }}" class="bg-white text-slate-400 px-3 lg:px-6 py-2 lg:py-2.5 rounded-full font-black text-[9px] lg:text-[10px] uppercase tracking-widest hover:text-brand-primary transition-all shadow-sm border border-slate-100 flex items-center gap-1.5 lg:gap-2">
+        <i class="bi bi-arrow-left"></i> <span class="hidden xs:block">Kembali</span>
     </a>
 </div>
 @endsection
 
 @section('content')
-<div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch -mt-8">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch -mt-4 lg:-mt-6">
     
     {{-- ==================== LEFT COLUMN: ORDER DETAILS (8/12) ==================== --}}
     <div class="lg:col-span-8 flex flex-col h-full">

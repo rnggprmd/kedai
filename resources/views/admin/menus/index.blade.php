@@ -5,7 +5,7 @@
 @section('page-subtitle', 'Kelola katalog makanan dan minuman secara visual.')
 
 @section('content')
-<div class="mb-10 flex flex-row items-center justify-between gap-4">
+<div class="-mt-4 lg:-mt-6 mb-10 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
     {{-- Unified Filter Bar (Shrinkable & Scrollable) --}}
     <div class="bg-white p-1.5 rounded-full border border-slate-200 shadow-sm flex flex-row items-center gap-2 flex-1 min-w-0 transition-all focus-within:ring-4 focus-within:ring-brand-accent/5 focus-within:border-brand-accent">
         {{-- Search Section --}}
@@ -76,7 +76,7 @@
 </div>
 
 <!-- Visual Menu Grid (Following Kasir Style) -->
-<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8" id="menuGrid">
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8" id="menuGrid">
     @foreach($menus as $menu)
     <div class="menu-card group bg-white rounded-[2.5rem] border border-slate-200 shadow-sm hover:shadow-2xl transition-all duration-500 overflow-hidden flex flex-col"
         data-category="{{ $menu->category_id }}"

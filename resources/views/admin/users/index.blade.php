@@ -5,9 +5,9 @@
 @section('page-subtitle', 'Kelola hak akses dan profil anggota staf restoran Anda.')
 
 @section('content')
-<div class="mb-10 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+<div class="-mt-4 lg:-mt-6 mb-10 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
     {{-- Unified Filter Bar (Matching Menus Style) --}}
-    <div class="bg-white p-1.5 rounded-[1.5rem] sm:rounded-full border border-slate-200 shadow-sm flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full max-w-2xl transition-all focus-within:ring-4 focus-within:ring-brand-accent/5 focus-within:border-brand-accent">
+    <div class="bg-white p-1.5 rounded-[1.5rem] sm:rounded-full border border-slate-200 shadow-sm flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full transition-all focus-within:ring-4 focus-within:ring-brand-accent/5 focus-within:border-brand-accent">
         {{-- Search Section --}}
         <div class="relative flex-1 group">
             <i class="bi bi-search absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-brand-accent transition-colors text-sm"></i>

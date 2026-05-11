@@ -11,7 +11,7 @@
 @endsection
 
 @section('content')
-<div class="max-w-3xl mx-auto">
+<div class="max-w-3xl mx-auto -mt-4 lg:-mt-6">
     <div class="bg-white p-8 lg:p-12 rounded-[2.5rem] border border-slate-200 shadow-sm">
         <form action="{{ route('admin.menus.store') }}" method="POST" enctype="multipart/form-data" class="space-y-8">
             @csrf

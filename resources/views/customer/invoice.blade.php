@@ -185,8 +185,8 @@
     <div class="invoice-container">
         <div class="header">
             <div class="brand">
-                <h1>KedaiPos</h1>
-                <p>Ecosystem v1.0</p>
+                <h1>Kedai Wasis</h1>
+                <p>Pusat Kuliner & Kopi</p>
             </div>
             <div class="invoice-meta">
                 <h2>INVOICE</h2>
@@ -257,7 +257,7 @@
         </div>
 
         <div class="footer">
-            <p>Terima kasih telah berkunjung ke KedaiPos!</p>
+            <p>Terima kasih telah berkunjung ke Kedai Wasis!</p>
             <p style="margin-top: 5px; font-size: 11px;">Struk ini adalah bukti pembayaran yang sah.</p>
         </div>
     </div>

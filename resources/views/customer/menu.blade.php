@@ -5,8 +5,8 @@
     <!-- Section Title & Info -->
     <div class="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-8">
         <div class="max-w-2xl">
-            <h2 class="text-slate-900 font-black text-4xl lg:text-6xl tracking-tight mb-4 leading-tight">Rasa Otentik <br><span class="text-brand-accent">Bahan Segar.</span></h2>
-            <p class="text-slate-500 font-medium text-lg lg:text-xl">Temukan pilihan hidangan buatan tangan kami, disiapkan dengan penuh semangat dan disajikan dengan senyuman.</p>
+            <h2 class="text-slate-900 font-black text-4xl lg:text-6xl tracking-tight mb-4 leading-tight">Nikmatnya Kuliner, <br><span class="text-brand-accent">Mantapnya Kopi.</span></h2>
+            <p class="text-slate-500 font-medium text-lg lg:text-xl">Manjakan lidah Anda dengan menu pilihan khas Kedai Wasis. Kreasi tulus dari hati, khusus untuk Anda dan orang tercinta.</p>
         </div>
         <div class="hidden md:flex flex-col items-end gap-3">
             <div class="flex items-center gap-2 bg-brand-primary/10 text-brand-primary px-4 py-2 rounded-2xl border border-brand-primary/20 shadow-sm">
@@ -20,16 +20,16 @@
         </div>
     </div>
 
-    <!-- Chef's Recommendations -->
+    <!-- Featured Recommendations -->
     <div class="mb-16">
         <div class="flex items-center gap-3 mb-8">
             <div class="w-12 h-1 bg-brand-secondary rounded-full"></div>
-            <h3 class="text-slate-900 font-black text-lg uppercase tracking-widest">Direkomendasikan untuk Anda</h3>
+            <h3 class="text-slate-900 font-black text-lg uppercase tracking-widest">Pilihan Menu Kedai Wasis</h3>
         </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-            @php $featured = $categories->first()->menus->take(2); @endphp
+        <div class="flex overflow-x-auto no-scrollbar gap-6 pb-4">
+            @php $featured = $categories->first()->menus->take(5); @endphp
             @foreach($featured as $menu)
-            <div class="group relative bg-brand-primary rounded-[2.5rem] overflow-hidden h-[280px] flex items-end p-8 lg:p-10 hover:shadow-2xl hover:shadow-brand-secondary/10 transition-all duration-500">
+            <div class="group relative bg-brand-primary rounded-[2.5rem] overflow-hidden h-[280px] w-[300px] md:w-[400px] flex-shrink-0 flex items-end p-8 lg:p-10 hover:shadow-lg transition-all duration-500">
                 <img src="{{ $menu->gambar_url }}" 
                      class="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:scale-110 transition-transform duration-1000">
                 <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent"></div>
@@ -50,20 +50,26 @@
         </div>
     </div>
 
-    <!-- Sticky Category Navigation & Search -->
-    <div class="sticky top-16 z-40 -mx-6 px-6 bg-white border-b border-slate-100 mb-10 py-4 flex flex-col gap-4 shadow-sm">
-        <div class="flex items-center gap-3 overflow-x-auto no-scrollbar pb-1">
-            @foreach($categories as $category)
-            <a href="#category-{{ $category->id }}" class="category-nav-link whitespace-nowrap px-6 py-2.5 rounded-full bg-slate-100 text-slate-500 font-bold text-[10px] uppercase tracking-widest hover:bg-brand-primary hover:text-brand-secondary transition-all duration-300">
-                {{ $category->nama }}
-            </a>
-            @endforeach
-        </div>
-        
-        <div class="relative group">
-            <i class="bi bi-search absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
-            <input type="text" id="menu-search" placeholder="Cari sesuatu yang lezat..." 
-                class="w-full bg-slate-100 border-none rounded-2xl pl-12 pr-5 py-4 text-sm font-bold text-slate-900 focus:ring-2 focus:ring-brand-primary transition-all placeholder:text-slate-400">
+    <!-- Sticky Category Navigation & Search (Floating & Rounded) -->
+    <div class="sticky top-20 z-40 bg-white/90 backdrop-blur-md border border-slate-200 rounded-[2rem] mb-12 p-5 shadow-md">
+        <div class="max-w-2xl mx-auto">
+            <div class="flex flex-col gap-5">
+                <!-- Category Tabs (Fixed & Wrapping) -->
+                <div class="flex flex-wrap items-center justify-center gap-2 pb-1">
+                    @foreach($categories as $category)
+                    <a href="#category-{{ $category->id }}" class="category-nav-link whitespace-nowrap px-5 py-2 rounded-full bg-slate-100 text-slate-500 font-bold text-[10px] uppercase tracking-widest hover:bg-brand-primary hover:text-brand-secondary transition-all duration-300">
+                        {{ $category->nama }}
+                    </a>
+                    @endforeach
+                </div>
+                
+                <!-- Search Bar -->
+                <div class="relative group">
+                    <i class="bi bi-search absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                    <input type="text" id="menu-search" placeholder="Cari sesuatu yang lezat..." 
+                        class="w-full bg-slate-50 border border-slate-100 rounded-2xl pl-12 pr-5 py-3.5 text-sm font-bold text-slate-900 focus:ring-2 focus:ring-brand-primary focus:bg-white transition-all placeholder:text-slate-400">
+                </div>
+            </div>
         </div>
     </div>
 
@@ -87,7 +93,7 @@
                         : 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400';
                 @endphp
                 @foreach($category->menus as $menu)
-                <div class="menu-item group bg-white rounded-[2.5rem] border border-slate-100 shadow-sm hover:shadow-xl hover:border-brand-secondary/30 transition-all duration-500 flex items-center p-5 gap-6 relative min-h-[140px] {{ !$menu->is_available ? 'opacity-60 grayscale-[0.5]' : '' }}" 
+                <div class="menu-item group bg-white rounded-[2.5rem] border border-slate-100 shadow-sm hover:shadow-md hover:border-brand-secondary/30 transition-all duration-500 flex items-center p-5 gap-6 relative min-h-[140px] {{ !$menu->is_available ? 'opacity-60 grayscale-[0.5]' : '' }}" 
                      data-name="{{ strtolower($menu->nama) }}">
                     
                     <!-- Info (Left) -->
@@ -99,7 +105,7 @@
                             <span class="text-brand-primary font-black text-lg">{{ $menu->formatted_harga }}</span>
                             
                             @if($menu->is_available)
-                            <button onclick='addToCart(@json($menu))' class="w-10 h-10 bg-brand-primary text-brand-secondary rounded-xl flex items-center justify-center hover:bg-brand-accent hover:text-white hover:scale-110 transition-all active:scale-90 shadow-lg shadow-brand-primary/10">
+                            <button onclick='addToCart(@json($menu))' class="w-10 h-10 bg-brand-primary text-brand-secondary rounded-xl flex items-center justify-center hover:bg-brand-accent hover:text-white hover:scale-110 transition-all active:scale-90 shadow-sm">
                                 <i class="bi bi-plus text-xl"></i>
                             </button>
                             @endif
@@ -184,7 +190,7 @@
                             </div>
                             
                             <div>
-                                <label class="block text-[11px] font-black text-slate-900 uppercase tracking-[0.2em] mb-3 ml-1">Catatan Dapur</label>
+                                <label class="block text-[11px] font-black text-slate-900 uppercase tracking-[0.2em] mb-3 ml-1">Catatan</label>
                                 <textarea name="catatan" placeholder="Ada permintaan khusus? (Opsional)" rows="2"
                                     class="w-full bg-slate-50 border-slate-200 rounded-2xl px-6 py-4 font-bold text-slate-900 focus:ring-2 focus:ring-brand-primary focus:bg-white transition-all placeholder:text-slate-400 border-none ring-1 ring-slate-200"></textarea>
                             </div>

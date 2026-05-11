@@ -4,11 +4,11 @@
 
 @section('content')
 <!-- High-Impact Welcome Banner (Premium Purple Theme) -->
-<div class="relative overflow-hidden rounded-[2.5rem] p-10 lg:p-14 text-white shadow-2xl mb-12" style="background: linear-gradient(135deg, #240046 0%, #3C096C 100%);">
+<div class="relative overflow-hidden rounded-[2.5rem] p-10 lg:p-14 text-white shadow-2xl mb-12 -mt-4 lg:-mt-6" style="background: linear-gradient(135deg, #240046 0%, #3C096C 100%);">
     <div class="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-10">
         <div>
             <h2 class="text-4xl lg:text-6xl font-black tracking-tighter mb-4 leading-none">
-                Selamat Datang, {{ explode(' ', auth()->user()->name)[0] }}! <span class="text-brand-secondary">.</span>
+                Selamat Datang, {{ explode(' ', auth()->user()->name)[0] }}! <span class="text-brand-accent">.</span>
             </h2>
             <p class="text-slate-400 text-lg font-medium max-w-md opacity-90">
                 Wawasan data telah siap. Kecerdasan bisnis Anda ada dalam genggaman.
@@ -66,7 +66,7 @@
                 <p class="text-slate-400 text-sm font-medium">Memantau tren pertumbuhan bisnis.</p>
             </div>
             <div class="flex gap-2">
-                <span class="w-3 h-3 bg-brand-primary rounded-full"></span>
+                <span class="w-3 h-3 bg-brand-accent rounded-full"></span>
                 <span class="w-3 h-3 bg-slate-100 rounded-full"></span>
             </div>
         </div>

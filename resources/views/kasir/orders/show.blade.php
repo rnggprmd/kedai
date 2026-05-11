@@ -1,8 +1,8 @@
 @extends('layouts.kasir')
 
 @section('title', 'Detail Pesanan')
-@section('page-title', 'Ringkasan Pesanan')
-@section('page-subtitle', 'Rincian transaksi dan penyelesaian pembayaran.')
+@section('page-title', 'Tinjauan Pesanan')
+@section('page-subtitle', 'Rincian transaksi dan riwayat pesanan pelanggan.')
 
 @section('topbar-actions')
 <div class="flex items-center gap-3">
@@ -19,7 +19,7 @@
 @endsection
 
 @section('content')
-<div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch -mt-8">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch -mt-4 lg:-mt-6">
     
     {{-- ==================== LEFT COLUMN: ORDER DETAILS (8/12) ==================== --}}
     <div class="lg:col-span-8 flex flex-col h-full">
@@ -32,7 +32,7 @@
                     </div>
                     <div>
                         <div class="flex items-center gap-3 mb-1">
-                            <h3 class="text-slate-900 font-black text-xl tracking-tight">Pesanan #{{ $order->kode_order }}</h3>
+                            <h3 class="text-slate-900 font-black text-xl tracking-tight">Order #{{ $order->kode_order }}</h3>
                         </div>
                         <div class="flex items-center gap-3">
                             <span class="text-slate-400 text-[9px] font-black uppercase tracking-widest flex items-center gap-1.5">
@@ -105,7 +105,7 @@
                 </div>
                 @endif
                 <div class="bg-brand-primary text-white flex justify-between items-center px-10 py-8">
-                    <span class="font-black uppercase tracking-widest text-[11px] opacity-80">Total Keseluruhan</span>
+                    <span class="font-black uppercase tracking-widest text-[11px] opacity-80">Total Pembayaran</span>
                     <span class="font-black text-4xl tracking-tighter leading-none">{{ $order->formatted_total }}</span>
                 </div>
             </div>
@@ -137,28 +137,30 @@
             <div class="absolute top-0 left-0 w-full h-1 bg-brand-secondary opacity-20"></div>
             
             <div class="flex-1 flex flex-col justify-center">
-                @if($order->status == 'completed')
+                @if($order->payment)
                     <div class="text-center py-6">
                         <div class="w-20 h-20 bg-brand-secondary text-white rounded-full flex items-center justify-center mx-auto mb-6 shadow-2xl shadow-brand-secondary/30">
-                            <i class="bi bi-check-lg text-4xl"></i>
+                            <i class="bi bi-patch-check-fill text-4xl"></i>
                         </div>
-                        <h4 class="text-slate-900 font-black text-xl mb-1 uppercase tracking-tight">Sudah Lunas</h4>
-                        <div class="space-y-3 mt-8">
+                        <h4 class="text-slate-900 font-black text-xl mb-1 uppercase tracking-tight">Lunas</h4>
+                        <p class="text-brand-secondary font-black uppercase tracking-widest text-[9px] mb-8">Transaksi Terverifikasi</p>
+                        
+                        <div class="space-y-3">
                             <div class="flex items-center justify-between px-4 py-2.5 bg-slate-50 rounded-xl border border-slate-100">
                                 <span class="text-slate-400 text-[8px] font-black uppercase tracking-widest">Metode</span>
                                 <span class="text-slate-900 font-black text-[10px] uppercase">{{ $order->payment->metode ?? 'Tunai' }}</span>
                             </div>
                             <div class="flex items-center justify-between px-4 py-2.5 bg-slate-50 rounded-xl border border-slate-100">
-                                <span class="text-slate-400 text-[8px] font-black uppercase tracking-widest">Waktu</span>
-                                <span class="text-slate-900 font-black text-[10px]">{{ $order->payment?->created_at?->format('H:i') }} WIB</span>
-                            </div>
-                            <div class="flex items-center justify-between px-4 py-2.5 bg-slate-50 rounded-xl border border-slate-100">
                                 <span class="text-slate-400 text-[8px] font-black uppercase tracking-widest">Tunai Diterima</span>
-                                <span class="text-slate-900 font-black text-[10px]">Rp {{ number_format($order->payment?->jumlah_bayar ?? 0, 0, ',', '.') }}</span>
+                                <span class="text-brand-primary font-black text-[10px]">Rp {{ number_format($order->payment?->jumlah_bayar ?? 0, 0, ',', '.') }}</span>
                             </div>
                             <div class="flex items-center justify-between px-4 py-2.5 bg-brand-primary/10 rounded-xl border border-brand-primary/20">
                                 <span class="text-brand-primary text-[8px] font-black uppercase tracking-widest">Kembalian</span>
                                 <span class="text-brand-primary font-black text-[12px]">Rp {{ number_format($order->payment?->jumlah_kembali ?? 0, 0, ',', '.') }}</span>
+                            </div>
+                            <div class="flex items-center justify-between px-4 py-2.5 bg-slate-50 rounded-xl border border-slate-100">
+                                <span class="text-slate-400 text-[8px] font-black uppercase tracking-widest">Waktu</span>
+                                <span class="text-slate-900 font-black text-[10px]">{{ $order->payment?->created_at?->format('H:i') }} WIB</span>
                             </div>
                         </div>
                     </div>
