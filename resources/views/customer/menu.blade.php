@@ -17,6 +17,12 @@
                 <i class="bi bi-geo-alt-fill"></i>
                 <span class="font-bold text-sm">Meja {{ $table->nama_meja }}</span>
             </div>
+            @if($activeOrder)
+            <div class="flex items-center gap-2 bg-green-500/20 text-green-700 px-4 py-2 rounded-2xl border border-green-500/50 shadow-sm animate-pulse">
+                <i class="bi bi-check-circle-fill"></i>
+                <span class="font-bold text-sm">Pesanan Aktif: {{ $activeOrder->kode_order }}</span>
+            </div>
+            @endif
         </div>
     </div>
 
@@ -180,6 +186,9 @@
                 <div class="px-6 py-8 lg:px-10 border-t border-slate-100 bg-white">
                     <form id="order-form" action="{{ route('customer.order.store', $table->qr_token) }}" method="POST" class="space-y-6">
                         @csrf
+                        @if($activeOrder)
+                        <input type="hidden" name="order_id" value="{{ $activeOrder->id }}">
+                        @endif
                         <div id="hidden-inputs"></div>
                         
                         <div class="space-y-4">
@@ -220,7 +229,28 @@
 
 @push('scripts')
 <script>
+    // Initialize cart from localStorage or empty array
     let cart = [];
+    const CART_STORAGE_KEY = 'kedai_wasis_cart_{{ $table->qr_token }}';
+
+    // Load cart from localStorage on page load
+    function loadCart() {
+        const stored = localStorage.getItem(CART_STORAGE_KEY);
+        if (stored) {
+            try {
+                cart = JSON.parse(stored);
+            } catch (e) {
+                console.error('Failed to load cart from localStorage:', e);
+                cart = [];
+            }
+        }
+        updateCartUI();
+    }
+
+    // Save cart to localStorage whenever it changes
+    function saveCart() {
+        localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cart));
+    }
 
     function addToCart(menu) {
         const existing = cart.find(i => i.id === menu.id);
@@ -234,6 +264,7 @@
             cart.push({ ...menu, qty: 1 });
         }
         updateCartUI();
+        saveCart();
         
         // Show premium feedback
         showToast(`${menu.nama} ditambahkan ke keranjang!`);
@@ -319,6 +350,7 @@
             }
         }
         updateCartUI();
+        saveCart();
     }
 
     function updateHiddenInputs() {
@@ -334,6 +366,26 @@
         const btn = document.getElementById('submit-btn');
         btn.dataset.loading = 'true';
         btn.disabled = true;
+    });
+
+    // Load cart from localStorage when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+        loadCart();
+        
+        // Listen for storage changes from other tabs (if user opens menu in multiple tabs)
+        window.addEventListener('storage', function(e) {
+            if (e.key === CART_STORAGE_KEY) {
+                loadCart();
+            }
+        });
+    });
+
+    // Clear cart from localStorage after successful order submission
+    window.addEventListener('beforeunload', function(e) {
+        // Don't clear on normal navigation, only on form submit
+        if (document.getElementById('order-form').dataset.loading === 'true') {
+            localStorage.removeItem(CART_STORAGE_KEY);
+        }
     });
 
     // Live Search Logic

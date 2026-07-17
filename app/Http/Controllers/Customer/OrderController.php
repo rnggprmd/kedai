@@ -32,6 +32,13 @@ class OrderController extends Controller
             ->where('is_active', true)
             ->firstOrFail();
 
+        // Cek apakah ada order pending untuk meja ini
+        $activeOrder = Order::where('table_id', $table->id)
+            ->where('status', '!=', 'completed')
+            ->where('status', '!=', 'cancelled')
+            ->latest()
+            ->first();
+
         $categories = Category::active()
             ->ordered()
             ->with(['menus' => function ($q) {
@@ -39,7 +46,7 @@ class OrderController extends Controller
             }])
             ->get();
 
-        return view('customer.menu', compact('table', 'categories'));
+        return view('customer.menu', compact('table', 'categories', 'activeOrder'));
     }
 
     /**
@@ -58,6 +65,7 @@ class OrderController extends Controller
             'items.*.menu_id' => 'required|exists:menus,id',
             'items.*.jumlah' => 'required|integer|min:1|max:50',
             'items.*.catatan' => 'nullable|string|max:255',
+            'order_id' => 'nullable|exists:orders,id',
         ]);
 
         // Cek ketersediaan stok/status menu sebelum diproses
@@ -69,7 +77,74 @@ class OrderController extends Controller
         }
 
         return \Illuminate\Support\Facades\DB::transaction(function () use ($request, $table, $qr_token) {
-            // Buat order
+            // Jika ada order_id, tambahkan items ke order yang sudah ada
+            if ($request->order_id) {
+                $order = Order::findOrFail($request->order_id);
+                
+                // Validasi bahwa order milik meja ini dan belum completed
+                abort_unless($order->table_id === $table->id, 404);
+                abort_if(in_array($order->status, ['completed', 'cancelled']), 400);
+
+                // Tambahkan items baru
+                foreach ($request->items as $item) {
+                    $menu = Menu::findOrFail($item['menu_id']);
+
+                    // Cek apakah item sudah ada di order
+                    $existingItem = OrderItem::where('order_id', $order->id)
+                        ->where('menu_id', $menu->id)
+                        ->first();
+
+                    if ($existingItem) {
+                        // Update jumlah jika item sudah ada
+                        $existingItem->update([
+                            'jumlah' => $existingItem->jumlah + $item['jumlah'],
+                        ]);
+                    } else {
+                        // Buat item baru
+                        OrderItem::create([
+                            'order_id' => $order->id,
+                            'menu_id' => $menu->id,
+                            'nama_menu' => $menu->nama,
+                            'harga' => $menu->harga,
+                            'jumlah' => $item['jumlah'],
+                            'catatan' => $item['catatan'] ?? null,
+                        ]);
+                    }
+                }
+
+                // Update catatan order jika ada
+                if ($request->catatan) {
+                    $order->update(['catatan' => $request->catatan]);
+                }
+
+                // Hitung ulang total
+                $order->hitungTotal();
+
+                // Update Midtrans dengan total baru
+                $params = [
+                    'transaction_details' => [
+                        'order_id' => $order->kode_order,
+                        'gross_amount' => (int) $order->total_harga,
+                    ],
+                    'customer_details' => [
+                        'first_name' => $order->nama_pelanggan ?: 'Customer',
+                    ],
+                ];
+
+                try {
+                    $snapToken = Snap::getSnapToken($params);
+                    $order->update(['snap_token' => $snapToken]);
+                } catch (\Exception $e) {
+                    \Log::error('Midtrans Error: ' . $e->getMessage());
+                }
+
+                return redirect()->route('customer.order.status', [
+                    'qr_token' => $qr_token,
+                    'order' => $order->id,
+                ])->with('success', 'Menu berhasil ditambahkan ke pesanan!');
+            }
+
+            // Jika tidak ada order_id, buat order baru
             $order = Order::create([
                 'table_id' => $table->id,
                 'nama_pelanggan' => $request->nama_pelanggan,
