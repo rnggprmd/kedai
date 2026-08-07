@@ -7,9 +7,8 @@
 - [Teknologi yang Digunakan](#teknologi-yang-digunakan)
 - [Role Pengguna](#role-pengguna)
 - [Instalasi](#instalasi)
-  - [Instalasi dengan Laragon](#instalasi-dengan-laragon)
-  - [Instalasi dengan XAMPP](#instalasi-dengan-xampp)
-  - [Instalasi dari GitHub](#instalasi-dari-github)
+  - [Instalasi dengan Laragon (Rekomendasi)](#-1-instalasi-dengan-laragon-rekomendasi)
+  - [Instalasi Manual (PHP CLI & Artisan Serve / XAMPP)](#%EF%B8%8F-2-instalasi-manual-php-cli--artisan-serve--xampp)
 - [Konfigurasi](#konfigurasi)
 - [Alur Penggunaan](#alur-penggunaan)
 - [Troubleshooting](#troubleshooting)
@@ -132,189 +131,169 @@ Password: password
 
 ## 📥 Instalasi
 
-### Prasyarat
-Pastikan sudah terinstall:
-- PHP 8.3 atau lebih tinggi
-- Composer
-- Node.js & NPM
-- Git (untuk clone dari GitHub)
+### Prasyarat Umum
+Sebelum melakukan instalasi, pastikan sistem Anda telah terinstall:
+- **PHP 8.3** atau versi yang lebih tinggi (beserta ekstensi `sqlite3`, `pdo_sqlite`, `mbstring`, `openssl`, `curl`)
+- **Composer** (Dependency manager untuk PHP)
+- **Node.js (v18+) & NPM** (untuk kompilasi assets frontend/Vite)
+- **Git** (opsional, untuk clone repository)
 
 ---
 
-## 🔧 Instalasi dengan Laragon
+## 🚀 1. Instalasi dengan Laragon (Rekomendasi)
+
+Laragon adalah lingkungan pengembangan lokal yang sangat direkomendasikan karena otomatis menangani pembuatan Virtual Host (`kedai.test`) dan konfigurasi server.
 
 ### Langkah 1: Persiapan Laragon
-1. Download dan install **Laragon** dari [https://laragon.org](https://laragon.org)
-2. Pastikan PHP version di Laragon adalah **8.3+**
-   - Klik kanan icon Laragon → PHP → Version → Pilih PHP 8.3
-3. Start Laragon (Start All)
+1. Download dan install **Laragon Full** dari [laragon.org](https://laragon.org/download/).
+2. Buka Laragon, pastikan versi PHP sudah **8.3+**:
+   - Klik kanan pada window Laragon → **PHP** → **Version** → Pilih **8.3.x**.
+3. Klik tombol **Start All** di Laragon.
 
-### Langkah 2: Clone/Download Project
+### Langkah 2: Tempatkan Proyek di Folder `www`
+Pindahkan atau clone folder proyek ke dalam direktori `C:\laragon\www\kedai`.
 
-**Opsi A: Clone dari GitHub**
-```bash
-cd C:\laragon\www
-git clone https://github.com/username/kedai.git
-cd kedai
-```
+- **Menggunakan Git:**
+  ```bash
+  cd C:\laragon\www
+  git clone https://github.com/username/kedai.git
+  cd kedai
+  ```
+- **Menggunakan ZIP:**
+  Extract file ZIP proyek ke `C:\laragon\www\kedai`.
 
-**Opsi B: Extract ZIP**
-1. Download project sebagai ZIP
-2. Extract ke folder `C:\laragon\www\kedai`
-
-### Langkah 3: Install Dependencies
-Buka **Laragon Terminal** (klik kanan icon Laragon → Terminal):
+### Langkah 3: Install PHP & Node Dependencies
+Buka **Terminal Laragon** (Klik tombol **Terminal** di Laragon atau klik kanan → **Terminal**):
 
 ```bash
 cd C:\laragon\www\kedai
 
-# Install PHP dependencies
+# Install dependensi Laravel (PHP)
 composer install
 
-# Install Node dependencies
+# Install dependensi Frontend (Node.js)
 npm install
 ```
 
-### Langkah 4: Konfigurasi Environment
+### Langkah 4: Setup Environment (.env)
 ```bash
-# Copy file .env.example menjadi .env
+# Salin file konfigurasi lingkungan
 copy .env.example .env
 
-# Generate application key
+# Generate Application Encryption Key
 php artisan key:generate
 ```
 
-### Langkah 5: Setup Database
+### Langkah 5: Setup Database & Storage Link
+Proyek ini secara *default* menggunakan database ringan **SQLite**.
+
 ```bash
-# Buat file database SQLite (sudah ada secara default)
-# Jika belum ada, buat file database kosong:
+# Buat file database SQLite (jika belum ada)
 type nul > database\database.sqlite
 
-# Jalankan migration
-php artisan migrate
+# Jalankan migrasi tabel dan seeder data awal
+php artisan migrate:fresh --seed
 
-# Jalankan seeder (data dummy)
-php artisan db:seed
+# Buat simbolik link untuk penyimpanan gambar/upload
+php artisan storage:link
 ```
 
-### Langkah 6: Build Assets
+### Langkah 6: Build Assets Frontend
 ```bash
-# Build Tailwind CSS & Vite assets
+# Untuk mode produksi (rekomendasi)
 npm run build
+
+# Atau untuk mode pengembangan (hot reloading)
+npm run dev
 ```
 
-### Langkah 7: Jalankan Aplikasi
-```bash
-# Jalankan development server
-php artisan serve
-```
-
-Atau buat **Virtual Host** di Laragon:
-1. Klik kanan icon Laragon → Apache → sites-enabled → Add
-2. Nama: `kedai.test`
-3. Akses via: `http://kedai.test`
-
-### Langkah 8: Akses Aplikasi
-```
-Admin Panel: http://localhost:8000/admin
-```
+### Langkah 7: Akses Aplikasi via Laragon
+Laragon secara otomatis akan membuatkan domain lokal Virtual Host:
+- **URL Aplikasi / Virtual Host**: [http://kedai.test](http://kedai.test)
+- **Halaman Admin**: [http://kedai.test/admin](http://kedai.test/admin)
+- *(Opsional jika tidak memakai Virtual Host)*: Jalankan `php artisan serve` lalu buka [http://localhost:8000](http://localhost:8000)
 
 ---
 
-## 🔧 Instalasi dengan XAMPP
+## 🛠️ 2. Instalasi Manual (PHP CLI & Artisan Serve / XAMPP)
 
-### Langkah 1: Persiapan XAMPP
-1. Download dan install **XAMPP** dari [https://www.apachefriends.org](https://www.apachefriends.org)
-2. Pastikan PHP version adalah **8.3+**
-3. Start **Apache** dari XAMPP Control Panel
+Panduan ini digunakan jika Anda tidak memakai Laragon (misalnya menggunakan Command Prompt/PowerShell biasa dengan PHP standalone atau XAMPP).
 
-### Langkah 2: Clone/Download Project
-**Opsi A: Clone dari GitHub**
-```bash
-cd C:\xampp\htdocs
-git clone https://github.com/username/kedai.git
-cd kedai
-```
+### Langkah 1: Tempatkan Proyek
+Tempatkan folder proyek di direktori pilihan Anda (misalnya `C:\xampp\htdocs\kedai` atau `D:\projects\kedai`).
 
-**Opsi B: Extract ZIP**
-1. Download project sebagai ZIP
-2. Extract ke folder `C:\xampp\htdocs\kedai`
-
-### Langkah 3: Install Composer
-1. Download Composer dari [https://getcomposer.org](https://getcomposer.org)
-2. Install Composer globally
-
-### Langkah 4: Install Dependencies
-Buka **Command Prompt** atau **PowerShell**:
+### Langkah 2: Install Dependencies via Terminal/CMD
+Buka **Command Prompt (cmd)** atau **PowerShell** sebagai Administrator, navigasikan ke folder proyek:
 
 ```bash
-cd C:\xampp\htdocs\kedai
+cd C:\path\to\kedai
 
-# Install PHP dependencies
+# 1. Install dependensi PHP
 composer install
 
-# Install Node dependencies (pastikan Node.js sudah terinstall)
+# 2. Install dependensi JavaScript/Tailwind
 npm install
 ```
 
-### Langkah 5: Konfigurasi Environment
+### Langkah 3: Setup Environment
 ```bash
-# Copy file .env.example menjadi .env
+# Copy file environment
 copy .env.example .env
 
-# Generate application key
+# Generate APP_KEY
 php artisan key:generate
 ```
 
-### Langkah 6: Setup Database
+### Langkah 4: Setup Database SQLite & Storage Link
 ```bash
-# Buat file database SQLite
+# Buat file kosong database.sqlite di folder database
 type nul > database\database.sqlite
 
-# Jalankan migration
-php artisan migrate
+# Jalankan migrasi dan seeder
+php artisan migrate:fresh --seed
 
-# Jalankan seeder
-php artisan db:seed
+# Hubungkan folder storage publik
+php artisan storage:link
 ```
 
-### Langkah 7: Build Assets
+### Langkah 5: Build Assets Frontend
 ```bash
 npm run build
 ```
 
-### Langkah 8: Konfigurasi Virtual Host (Opsional)
-Edit file `C:\xampp\apache\conf\extra\httpd-vhost.conf`:
+### Langkah 6: Jalankan Server Lokal (Artisan Serve)
+Jalankan server bawaan Laravel:
 
-```apache
-<VirtualHost *:80>
-    DocumentRoot "C:/xampp/htdocs/kedai/public"
-    ServerName kedai.test
-    <Directory "C:/xampp/htdocs/kedai/public">
-        Options Indexes FollowSymLinks
-        AllowOverride All
-        Require all granted
-    </Directory>
-</VirtualHost>
-```
-
-Edit file `C:\Windows\System32\drivers\etc\hosts` (sebagai Administrator):
-```
-127.0.0.1 kedai.test
-```
-
-Restart Apache dari XAMPP Control Panel.
-
-### Langkah 9: Jalankan Aplikasi
-**Opsi A: Tanpa Virtual Host**
 ```bash
-cd C:\xampp\htdocs\kedai
 php artisan serve
 ```
-Akses: `http://localhost:8000`
 
-**Opsi B: Dengan Virtual Host**
-Akses: `http://kedai.test`
+Aplikasi akan berjalan di:
+- **URL Utama**: [http://127.0.0.1:8000](http://127.0.0.1:8000) atau [http://localhost:8000](http://localhost:8000)
+- **Halaman Admin**: [http://localhost:8000/admin](http://localhost:8000/admin)
+
+---
+
+### (Opsional) Konfigurasi Virtual Host di XAMPP
+Jika Anda menggunakan XAMPP dan ingin mengakses via domain `http://kedai.test`:
+
+1. Buka file `C:\xampp\apache\conf\extra\httpd-vhosts.conf` dan tambahkan:
+   ```apache
+   <VirtualHost *:80>
+       DocumentRoot "C:/xampp/htdocs/kedai/public"
+       ServerName kedai.test
+       <Directory "C:/xampp/htdocs/kedai/public">
+           Options Indexes FollowSymLinks
+           AllowOverride All
+           Require all granted
+       </Directory>
+   </VirtualHost>
+   ```
+2. Buka **Notepad sebagai Administrator**, lalu buka file `C:\Windows\System32\drivers\etc\hosts` dan tambahkan baris berikut di bagian bawah:
+   ```text
+   127.0.0.1 kedai.test
+   ```
+3. Restart modul Apache di XAMPP Control Panel. Akses via [http://kedai.test](http://kedai.test).
 
 ---
 
