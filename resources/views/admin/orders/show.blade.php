@@ -160,7 +160,7 @@
                             </div>
                             <div class="flex items-center justify-between px-4 py-2.5 bg-slate-50 rounded-xl border border-slate-100">
                                 <span class="text-slate-400 text-[8px] font-black uppercase tracking-widest">Waktu</span>
-                                <span class="text-slate-900 font-black text-[10px]">{{ $order->payment->created_at->format('H:i') }} WIB</span>
+                                <span class="text-slate-900 font-black text-[10px]">{{ $order->payment->paid_at ? $order->payment->paid_at->format('H:i') : $order->payment->created_at->format('H:i') }} WIB</span>
                             </div>
                         </div>
                     </div>

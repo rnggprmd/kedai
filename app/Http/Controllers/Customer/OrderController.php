@@ -71,8 +71,8 @@ class OrderController extends Controller
         // Cek ketersediaan stok/status menu sebelum diproses
         foreach ($request->items as $item) {
             $menu = Menu::find($item['menu_id']);
-            if (!$menu || !$menu->is_available) {
-                return back()->with('error', 'Mohon maaf, menu ' . ($menu->nama ?? 'pilihan Anda') . ' saat ini sedang habis. Silakan perbarui pesanan Anda.')->withInput();
+            if (!$menu || !$menu->is_available || !$menu->is_active) {
+                return back()->with('error', 'Mohon maaf, menu ' . ($menu->nama ?? 'pilihan Anda') . ' saat ini sedang tidak tersedia. Silakan perbarui pesanan Anda.')->withInput();
             }
         }
 
@@ -145,10 +145,13 @@ class OrderController extends Controller
             }
 
             // Jika tidak ada order_id, buat order baru
+            $namaPelanggan = $request->filled('nama_pelanggan') ? $request->nama_pelanggan : 'Walk-in Guest';
             $order = Order::create([
                 'table_id' => $table->id,
-                'nama_pelanggan' => $request->nama_pelanggan,
+                'nama_pelanggan' => $namaPelanggan,
                 'catatan' => $request->catatan,
+                'status' => 'pending',
+                'total_harga' => 0,
             ]);
 
             // Buat order items
@@ -220,7 +223,7 @@ class OrderController extends Controller
                             'jumlah_bayar' => $order->total_harga,
                             'jumlah_kembali' => 0,
                             'status' => 'paid',
-                            'midtrans_transaction_id' => $status->transaction_id,
+                            'paid_at' => now(),
                         ]);
                     }
                 }
@@ -229,7 +232,7 @@ class OrderController extends Controller
             }
         }
 
-        $order->load('items');
+        $order->load(['items', 'table', 'payment']);
 
         return view('customer.status', compact('table', 'order'));
     }
@@ -242,7 +245,7 @@ class OrderController extends Controller
         $table = Table::where('qr_token', $qr_token)->firstOrFail();
         abort_unless($order->table_id === $table->id, 404);
 
-        $order->load(['items', 'table']);
+        $order->load(['items', 'table', 'payment']);
         
         $pdf = Pdf::loadView('customer.invoice', compact('order'));
         return $pdf->download('Invoice-' . $order->kode_order . '.pdf');

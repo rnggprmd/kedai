@@ -27,14 +27,17 @@ class Order extends Model
     {
         static::creating(function (Order $order) {
             if (empty($order->kode_order)) {
-                $lastOrder = static::whereDate('created_at', today())->latest('id')->first();
-                $lastSequence = 0;
+                $todayPrefix = 'ORD-' . now()->format('Ymd') . '-';
+                $lastOrder = static::where('kode_order', 'like', $todayPrefix . '%')
+                    ->orderBy('id', 'desc')
+                    ->first();
                 
+                $lastSequence = 0;
                 if ($lastOrder && preg_match('/-(\d+)$/', $lastOrder->kode_order, $matches)) {
                     $lastSequence = (int) $matches[1];
                 }
 
-                $order->kode_order = 'ORD-' . now()->format('Ymd') . '-' . str_pad(
+                $order->kode_order = $todayPrefix . str_pad(
                     $lastSequence + 1,
                     3,
                     '0',

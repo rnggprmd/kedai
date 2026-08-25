@@ -105,11 +105,18 @@
                         </div>
                     </div>
 
-                    <a href="{{ route('customer.menu', $table->qr_token) }}" 
-                       class="mt-5 w-full max-w-[240px] py-2.5 bg-slate-900 text-white rounded-lg font-black text-[8px] uppercase tracking-[0.2em] hover:bg-brand-primary transition-all active:scale-95 flex items-center justify-center gap-2 shrink-0">
-                        <i class="bi bi-plus-lg"></i>
-                        Pesan Menu Lagi
-                    </a>
+                    <div class="flex flex-col gap-2 w-full max-w-[240px] mt-4">
+                        <a href="{{ route('customer.order.invoice', [$table->qr_token, $order]) }}" 
+                           class="w-full py-2.5 bg-brand-primary text-brand-secondary rounded-lg font-black text-[8px] uppercase tracking-[0.2em] hover:opacity-90 transition-all active:scale-95 flex items-center justify-center gap-2 shadow-sm">
+                            <i class="bi bi-file-earmark-pdf-fill text-xs"></i>
+                            Unduh Struk / Invoice
+                        </a>
+                        <a href="{{ route('customer.menu', $table->qr_token) }}" 
+                           class="w-full py-2.5 bg-slate-100 text-slate-700 rounded-lg font-black text-[8px] uppercase tracking-[0.2em] hover:bg-slate-200 transition-all active:scale-95 flex items-center justify-center gap-2">
+                            <i class="bi bi-plus-lg"></i>
+                            Pesan Menu Lagi
+                        </a>
+                    </div>
                 </div>
                 @else
                 <!-- Normal Status Summary -->
@@ -158,7 +165,7 @@
 </style>
 
 <!-- Midtrans Snap JS -->
-<script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ config('midtrans.client_key') }}"></script>
+<script src="{{ config('midtrans.is_production') ? 'https://app.midtrans.com/snap/snap.js' : 'https://app.sandbox.midtrans.com/snap/snap.js' }}" data-client-key="{{ config('midtrans.client_key') }}"></script>
 <script type="text/javascript">
     const payButton = document.getElementById('pay-button');
     if (payButton) {

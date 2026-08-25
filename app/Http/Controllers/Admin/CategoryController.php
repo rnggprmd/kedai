@@ -24,10 +24,12 @@ class CategoryController extends Controller
         $validated = $request->validate([
             'nama'      => 'required|string|max:100',
             'urutan'    => 'nullable|integer|min:0',
-            'is_active' => 'boolean',
+            'is_active' => 'nullable|boolean',
         ]);
 
-        $validated['is_active'] = $request->boolean('is_active');
+        $validated['urutan'] = $validated['urutan'] ?? 0;
+        $validated['is_active'] = $request->boolean('is_active', true);
+        
         Category::create($validated);
 
         return redirect()->route('admin.categories.index')
@@ -42,12 +44,14 @@ class CategoryController extends Controller
     public function update(Request $request, Category $category)
     {
         $validated = $request->validate([
-            'nama' => 'required|string|max:100',
-            'urutan' => 'nullable|integer|min:0',
-            'is_active' => 'boolean',
+            'nama'      => 'required|string|max:100',
+            'urutan'    => 'nullable|integer|min:0',
+            'is_active' => 'nullable|boolean',
         ]);
 
+        $validated['urutan'] = $validated['urutan'] ?? 0;
         $validated['is_active'] = $request->boolean('is_active');
+        
         $category->update($validated);
 
         return redirect()->route('admin.categories.index')
@@ -57,7 +61,7 @@ class CategoryController extends Controller
     public function destroy(Category $category)
     {
         if ($category->menus()->exists()) {
-            return back()->with('error', 'Kategori tidak bisa dihapus karena masih memiliki menu.');
+            return back()->with('error', 'Kategori tidak bisa dihapus karena masih memiliki menu. Silakan pindahkan atau hapus menu terkait terlebih dahulu.');
         }
 
         $category->delete();

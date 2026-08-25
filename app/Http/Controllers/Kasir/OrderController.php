@@ -10,6 +10,8 @@ use App\Models\OrderItem;
 use App\Models\Payment;
 use App\Models\Table;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Midtrans\Config;
 use Midtrans\Snap;
 
@@ -53,33 +55,46 @@ class OrderController extends Controller
             'catatan'           => 'nullable|string|max:500',
             'items'             => 'required|array|min:1',
             'items.*.menu_id'   => 'required|exists:menus,id',
-            'items.*.jumlah'    => 'required|integer|min:1',
+            'items.*.jumlah'    => 'required|integer|min:1|max:50',
             'items.*.catatan'   => 'nullable|string|max:255',
         ]);
 
-        $order = Order::create([
-            'table_id'       => $request->table_id,
-            'nama_pelanggan' => $request->nama_pelanggan ?? 'Walk-in Guest',
-            'catatan'        => $request->catatan,
-            'status'         => 'confirmed',  // langsung confirmed karena kasir yg input
-            'kasir_id'       => auth()->id(),
-            'total_harga'    => 0,
-        ]);
-
+        // Cek ketersediaan menu sebelum disimpan
         foreach ($request->items as $item) {
-            $menu = Menu::findOrFail($item['menu_id']);
-            OrderItem::create([
-                'order_id'   => $order->id,
-                'menu_id'    => $menu->id,
-                'nama_menu'  => $menu->nama,
-                'harga'      => $menu->harga,
-                'jumlah'     => $item['jumlah'],
-                'subtotal'   => $menu->harga * $item['jumlah'],
-                'catatan'    => $item['catatan'] ?? null,
-            ]);
+            $menu = Menu::find($item['menu_id']);
+            if (!$menu || !$menu->is_available || !$menu->is_active) {
+                return back()->with('error', 'Menu ' . ($menu->nama ?? 'pilihan') . ' saat ini tidak tersedia.')->withInput();
+            }
         }
 
-        $order->hitungTotal();
+        $order = DB::transaction(function () use ($request) {
+            $namaPelanggan = $request->filled('nama_pelanggan') ? $request->nama_pelanggan : 'Walk-in Guest';
+
+            $order = Order::create([
+                'table_id'       => $request->table_id,
+                'nama_pelanggan' => $namaPelanggan,
+                'catatan'        => $request->catatan,
+                'status'         => 'confirmed', // Langsung confirmed karena diinput oleh kasir
+                'kasir_id'       => auth()->id(),
+                'total_harga'    => 0,
+            ]);
+
+            foreach ($request->items as $item) {
+                $menu = Menu::findOrFail($item['menu_id']);
+                OrderItem::create([
+                    'order_id'   => $order->id,
+                    'menu_id'    => $menu->id,
+                    'nama_menu'  => $menu->nama,
+                    'harga'      => $menu->harga,
+                    'jumlah'     => $item['jumlah'],
+                    'catatan'    => $item['catatan'] ?? null,
+                ]);
+            }
+
+            $order->hitungTotal();
+
+            return $order;
+        });
 
         // Generate Midtrans Snap Token
         $params = [
@@ -96,10 +111,10 @@ class OrderController extends Controller
             $snapToken = Snap::getSnapToken($params);
             $order->update(['snap_token' => $snapToken]);
         } catch (\Exception $e) {
-            \Log::error('Midtrans Error Kasir: ' . $e->getMessage());
+            Log::error('Midtrans Error Kasir: ' . $e->getMessage());
         }
 
-        return redirect()            ->route('kasir.orders.show', $order)
+        return redirect()->route('kasir.orders.show', $order)
             ->with('success', 'Pesanan berhasil dibuat! Silakan proses pembayaran.');
     }
 
@@ -107,7 +122,7 @@ class OrderController extends Controller
     {
         $order->load(['table', 'items.menu', 'payment']);
         
-        // Generate token if missing and order is not finished
+        // Generate token jika belum ada dan order belum selesai
         if (empty($order->snap_token) && !in_array($order->status, ['completed', 'cancelled'])) {
             $params = [
                 'transaction_details' => [
@@ -119,10 +134,10 @@ class OrderController extends Controller
                 ],
             ];
             try {
-                $snapToken = \Midtrans\Snap::getSnapToken($params);
+                $snapToken = Snap::getSnapToken($params);
                 $order->update(['snap_token' => $snapToken]);
             } catch (\Exception $e) {
-                \Log::error('Midtrans Error Kasir Show: ' . $e->getMessage());
+                Log::error('Midtrans Error Kasir Show: ' . $e->getMessage());
             }
         }
 
@@ -132,7 +147,7 @@ class OrderController extends Controller
     public function updateStatus(Request $request, Order $order)
     {
         $request->validate([
-            'status' => 'required|in:confirmed,completed,cancelled',
+            'status' => 'required|in:pending,confirmed,completed,cancelled',
         ]);
 
         $order->update([
@@ -150,24 +165,30 @@ class OrderController extends Controller
             'jumlah_bayar' => 'required|numeric|min:' . $order->total_harga,
         ]);
 
-        $jumlahKembali = $request->jumlah_bayar - $order->total_harga;
+        // Cegah pembayaran ganda
+        if ($order->payment || $order->status === 'completed') {
+            return back()->with('error', 'Pesanan ini sudah lunas sebelumnya.');
+        }
 
+        $jumlahKembali = (float) $request->jumlah_bayar - (float) $order->total_harga;
         $metodeDB = in_array($request->metode, ['midtrans', 'non-tunai']) ? 'qris' : $request->metode;
 
-        Payment::create([
-            'order_id' => $order->id,
-            'metode' => $metodeDB,
-            'jumlah_bayar' => $request->jumlah_bayar,
-            'jumlah_kembali' => $jumlahKembali,
-            'status' => 'paid',
-            'kasir_id' => auth()->id(),
-            'paid_at' => now(),
-        ]);
+        DB::transaction(function () use ($request, $order, $metodeDB, $jumlahKembali) {
+            Payment::create([
+                'order_id' => $order->id,
+                'metode' => $metodeDB,
+                'jumlah_bayar' => $request->jumlah_bayar,
+                'jumlah_kembali' => $jumlahKembali,
+                'status' => 'paid',
+                'kasir_id' => auth()->id(),
+                'paid_at' => now(),
+            ]);
 
-        $order->update([
-            'status' => 'completed',
-            'kasir_id' => auth()->id(),
-        ]);
+            $order->update([
+                'status' => 'completed',
+                'kasir_id' => auth()->id(),
+            ]);
+        });
 
         return back()->with('success', 'Pembayaran berhasil diproses. Kembalian: Rp ' . number_format($jumlahKembali, 0, ',', '.'));
     }

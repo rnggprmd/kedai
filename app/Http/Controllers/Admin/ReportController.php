@@ -7,6 +7,7 @@ use App\Models\Order;
 use App\Models\Payment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class ReportController extends Controller
 {
@@ -21,7 +22,7 @@ class ReportController extends Controller
     {
         $data = $this->getReportData($request);
         
-        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('admin.reports.pdf', $data)
+        $pdf = Pdf::loadView('admin.reports.pdf', $data)
             ->setPaper('a4', 'portrait');
 
         return $pdf->download('Laporan-Penjualan-' . $data['startDate'] . '-to-' . $data['endDate'] . '.pdf');
@@ -30,22 +31,25 @@ class ReportController extends Controller
     private function getReportData(Request $request)
     {
         $startDate = $request->input('from', now()->startOfMonth()->toDateString());
-        $endDate = $request->input('to', now()->toDateString());
+        $endDate   = $request->input('to', now()->toDateString());
+
+        $startDateTime = $startDate . ' 00:00:00';
+        $endDateTime   = $endDate . ' 23:59:59';
 
         // Ringkasan
         $summary = [
-            'total_orders' => Order::whereBetween('created_at', [$startDate, $endDate . ' 23:59:59'])
+            'total_orders' => Order::whereBetween('created_at', [$startDateTime, $endDateTime])
                 ->where('status', 'completed')
                 ->count(),
-            'total_pendapatan' => Order::whereBetween('created_at', [$startDate, $endDate . ' 23:59:59'])
+            'total_pendapatan' => Order::whereBetween('created_at', [$startDateTime, $endDateTime])
                 ->where('status', 'completed')
                 ->sum('total_harga'),
             'total_items_sold' => DB::table('order_items')
                 ->join('orders', 'orders.id', '=', 'order_items.order_id')
                 ->where('orders.status', 'completed')
-                ->whereBetween('orders.created_at', [$startDate, $endDate . ' 23:59:59'])
+                ->whereBetween('orders.created_at', [$startDateTime, $endDateTime])
                 ->sum('order_items.jumlah') ?? 0,
-            'total_cancelled' => Order::whereBetween('created_at', [$startDate, $endDate . ' 23:59:59'])
+            'total_cancelled' => Order::whereBetween('created_at', [$startDateTime, $endDateTime])
                 ->where('status', 'cancelled')
                 ->count(),
         ];
@@ -57,7 +61,7 @@ class ReportController extends Controller
                 DB::raw('SUM(total_harga) as total')
             )
             ->where('status', 'completed')
-            ->whereBetween('created_at', [$startDate, $endDate . ' 23:59:59'])
+            ->whereBetween('created_at', [$startDateTime, $endDateTime])
             ->groupBy('tanggal')
             ->orderBy('tanggal')
             ->get();
@@ -66,7 +70,7 @@ class ReportController extends Controller
         $popular_menus = DB::table('order_items')
             ->join('orders', 'orders.id', '=', 'order_items.order_id')
             ->where('orders.status', 'completed')
-            ->whereBetween('orders.created_at', [$startDate, $endDate . ' 23:59:59'])
+            ->whereBetween('orders.created_at', [$startDateTime, $endDateTime])
             ->select(
                 'order_items.nama_menu', 
                 DB::raw('SUM(order_items.jumlah) as total_qty'),
@@ -79,18 +83,18 @@ class ReportController extends Controller
 
         // Metode pembayaran
         $paymentMethods = Payment::where('status', 'paid')
-            ->whereBetween('created_at', [$startDate, $endDate . ' 23:59:59'])
+            ->whereBetween('created_at', [$startDateTime, $endDateTime])
             ->select('metode', DB::raw('COUNT(*) as jumlah'), DB::raw('SUM(jumlah_bayar - jumlah_kembali) as total'))
             ->groupBy('metode')
             ->get();
 
         return [
-            'summary' => $summary,
-            'daily' => $daily,
-            'popular_menus' => $popular_menus,
+            'summary'        => $summary,
+            'daily'          => $daily,
+            'popular_menus'  => $popular_menus,
             'paymentMethods' => $paymentMethods,
-            'startDate' => $startDate,
-            'endDate' => $endDate,
+            'startDate'      => $startDate,
+            'endDate'        => $endDate,
         ];
     }
 }

@@ -21,9 +21,19 @@ class LoginController extends Controller
         ]);
 
         if (Auth::attempt($credentials, $request->boolean('remember'))) {
-            $request->session()->regenerate();
-
             $user = Auth::user();
+
+            if (!$user->is_active) {
+                Auth::logout();
+                $request->session()->invalidate();
+                $request->session()->regenerateToken();
+
+                return back()->withErrors([
+                    'email' => 'Akun Anda telah dinonaktifkan. Silakan hubungi Administrator.',
+                ])->onlyInput('email');
+            }
+
+            $request->session()->regenerate();
 
             // Redirect berdasarkan role
             return match ($user->role) {

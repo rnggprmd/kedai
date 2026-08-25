@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 
 // === Auth Controllers ===
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\ProfileController;
 
 // === Panel Controllers ===
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
@@ -52,11 +53,11 @@ Route::middleware('guest')->group(function () {
     Route::post('/login', [LoginController::class, 'login'])->name('login.attempt');
 });
 
-Route::post('/logout', [LoginController::class, 'logout'])->name('logout')->middleware('auth');
-
-Route::get('/profile', function () {
-    return view('profile');
-})->name('profile')->middleware('auth');
+Route::middleware('auth')->group(function () {
+    Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+    Route::get('/profile', [ProfileController::class, 'show'])->name('profile');
+    Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
+});
 
 /*
 |--------------------------------------------------------------------------

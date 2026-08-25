@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Order;
+use App\Models\Payment;
 use App\Models\User;
 use Illuminate\Http\Request;
 
@@ -51,6 +53,12 @@ class UserController extends Controller
 
         $validated['is_active'] = $request->boolean('is_active');
 
+        // Cegah admin mengunci diri sendiri
+        if ($user->id === auth()->id()) {
+            $validated['is_active'] = true;
+            $validated['role'] = 'admin';
+        }
+
         if (empty($validated['password'])) {
             unset($validated['password']);
         }
@@ -67,8 +75,8 @@ class UserController extends Controller
             return back()->with('error', 'Tidak bisa menghapus akun sendiri.');
         }
 
-        // Cek apakah user sudah pernah memproses pesanan
-        if (\App\Models\Order::where('kasir_id', $user->id)->exists()) {
+        // Cek apakah user sudah pernah memproses pesanan atau pembayaran
+        if (Order::where('kasir_id', $user->id)->exists() || Payment::where('kasir_id', $user->id)->exists()) {
             return back()->with('error', 'Pengguna tidak bisa dihapus karena sudah memiliki riwayat transaksi. Silakan nonaktifkan saja akun ini.');
         }
 

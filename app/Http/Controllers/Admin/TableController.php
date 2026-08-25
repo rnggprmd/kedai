@@ -50,6 +50,7 @@ class TableController extends Controller
 
     public function show(Table $table)
     {
+        $table->loadCount('orders');
         $table->load(['orders' => function ($q) {
             $q->latest()->take(20);
         }]);
@@ -80,8 +81,8 @@ class TableController extends Controller
 
     public function destroy(Table $table)
     {
-        if ($table->orders()->whereNotIn('status', ['completed', 'cancelled'])->exists()) {
-            return back()->with('error', 'Meja tidak bisa dihapus karena masih ada pesanan aktif.');
+        if ($table->orders()->exists()) {
+            return back()->with('error', 'Meja tidak bisa dihapus karena sudah memiliki riwayat pesanan. Silakan nonaktifkan saja status meja ini.');
         }
 
         $table->delete();

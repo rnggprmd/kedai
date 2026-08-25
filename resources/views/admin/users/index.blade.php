@@ -221,7 +221,7 @@
 
     function openEditModal(data) {
         document.getElementById('modalTitle').innerText = 'Edit Profil';
-        document.getElementById('userForm').action = "/admin/users/" + data.id;
+        document.getElementById('userForm').action = "{{ url('admin/users') }}/" + data.id;
         document.getElementById('methodField').value = 'PATCH';
         document.getElementById('statusWrapper').classList.remove('hidden');
         document.getElementById('passHint').innerText = '(kosongkan jika tidak diganti)';

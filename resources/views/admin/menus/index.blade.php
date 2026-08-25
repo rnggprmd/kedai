@@ -27,7 +27,6 @@
         {{-- Category & Availability Filter Section --}}
         <div class="flex-1 min-w-0 flex items-center gap-1 px-1 py-1 sm:py-0 overflow-x-auto no-scrollbar">
             {{-- All Categories --}}
-            {{-- All Categories --}}
             <a href="{{ request()->fullUrlWithQuery(['category' => null, 'availability' => null]) }}" @class([
                 'flex-none px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest transition-all',
                 'bg-brand-accent text-white shadow-lg shadow-brand-accent/20' => !request('category') && !request('availability'),
@@ -257,7 +256,7 @@
 
     function openEditModal(data) {
         document.getElementById('modalTitle').innerText = 'Edit Menu';
-        document.getElementById('menuForm').action = "/admin/menus/" + data.id;
+        document.getElementById('menuForm').action = "{{ url('admin/menus') }}/" + data.id;
         document.getElementById('methodField').value = 'PATCH';
         document.getElementById('menu_nama').value = data.nama;
         document.getElementById('menu_category_id').value = data.category_id;

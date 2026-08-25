@@ -27,13 +27,17 @@
     </div>
 
     <!-- Featured Recommendations -->
+    @php
+        $allMenus = $categories->flatMap(fn($c) => $c->menus);
+        $featured = $allMenus->take(6);
+    @endphp
+    @if($featured->isNotEmpty())
     <div class="mb-16">
         <div class="flex items-center gap-3 mb-8">
             <div class="w-12 h-1 bg-brand-secondary rounded-full"></div>
             <h3 class="text-slate-900 font-black text-lg uppercase tracking-widest">Pilihan Menu Kedai Wasis</h3>
         </div>
         <div class="flex overflow-x-auto no-scrollbar gap-6 pb-4">
-            @php $featured = $categories->first()->menus->take(5); @endphp
             @foreach($featured as $menu)
             <div class="group relative bg-brand-primary rounded-[2.5rem] overflow-hidden h-[280px] w-[300px] md:w-[400px] flex-shrink-0 flex items-end p-8 lg:p-10 hover:shadow-lg transition-all duration-500">
                 <img src="{{ $menu->gambar_url }}" 
@@ -41,7 +45,7 @@
                 <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent"></div>
                 <div class="relative z-10 w-full flex justify-between items-end gap-6">
                     <div class="flex-1">
-                        <span class="px-3 py-1 bg-brand-secondary text-brand-primary text-[9px] font-black uppercase tracking-widest rounded-full mb-3 inline-block">Terlaris</span>
+                        <span class="px-3 py-1 bg-brand-secondary text-brand-primary text-[9px] font-black uppercase tracking-widest rounded-full mb-3 inline-block">Rekomendasi</span>
                         <h4 class="text-white font-black text-2xl lg:text-3xl mb-1 leading-tight">{{ $menu->nama }}</h4>
                         <p class="text-brand-secondary font-black text-lg">{{ $menu->formatted_harga }}</p>
                     </div>
@@ -55,6 +59,7 @@
             @endforeach
         </div>
     </div>
+    @endif
 
     <!-- Sticky Category Navigation & Search (Floating & Rounded) -->
     <div class="sticky top-20 z-40 bg-white/90 backdrop-blur-md border border-slate-200 rounded-[2rem] mb-12 p-5 shadow-md">

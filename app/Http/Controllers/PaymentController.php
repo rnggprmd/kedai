@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Order;
+use App\Models\Payment;
 use Illuminate\Http\Request;
 use Midtrans\Config;
 use Midtrans\Notification;
@@ -47,11 +48,11 @@ class PaymentController extends Controller
                 if ($fraud == 'challenge') {
                     $order->update(['status' => 'pending']);
                 } else {
-                    $this->markAsPaid($order, $type, $transaction);
+                    $this->markAsPaid($order, $type);
                 }
             }
         } else if ($transaction == 'settlement') {
-            $this->markAsPaid($order, $type, $transaction);
+            $this->markAsPaid($order, $type);
         } else if ($transaction == 'pending') {
             $order->update(['status' => 'pending']);
         } else if ($transaction == 'deny' || $transaction == 'expire' || $transaction == 'cancel') {
@@ -64,19 +65,19 @@ class PaymentController extends Controller
         ]);
     }
 
-    private function markAsPaid(Order $order, $paymentType, $transactionId)
+    private function markAsPaid(Order $order, $paymentType)
     {
         $order->update(['status' => 'completed']);
         
         // Buat record payment jika belum ada (mencegah duplikasi webhook)
-        if (!\App\Models\Payment::where('order_id', $order->id)->exists()) {
-            \App\Models\Payment::create([
+        if (!Payment::where('order_id', $order->id)->exists()) {
+            Payment::create([
                 'order_id' => $order->id,
-                'metode' => 'qris', // Umumkan midtrans sebagai qris/non-tunai di DB
+                'metode' => in_array($paymentType, ['qris', 'gopay', 'shopeepay']) ? 'qris' : 'transfer',
                 'jumlah_bayar' => $order->total_harga,
                 'jumlah_kembali' => 0,
                 'status' => 'paid',
-                'midtrans_transaction_id' => $transactionId,
+                'paid_at' => now(),
             ]);
         }
     }

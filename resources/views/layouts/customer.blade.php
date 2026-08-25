@@ -37,10 +37,12 @@
                     <p class="hidden sm:block text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-1">Self-Service Menu</p>
                 </div>
             </div>
+            @if(isset($table))
             <div class="bg-brand-secondary text-brand-primary px-3 py-1.5 lg:px-4 lg:py-2 rounded-lg lg:rounded-xl flex items-center gap-1.5 lg:gap-2 shadow-sm border border-brand-secondary/20">
                 <i class="bi bi-geo-alt-fill text-xs lg:text-base"></i>
                 <span class="font-extrabold text-[10px] lg:text-sm uppercase tracking-tight text-brand-primary whitespace-nowrap">Meja {{ $table->nama_meja }}</span>
             </div>
+            @endif
         </div>
     </header>
 

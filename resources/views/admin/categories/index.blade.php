@@ -185,7 +185,6 @@
         </form>
     </div>
 </div>
-</div>
 
 @push('scripts')
 <script>
@@ -215,7 +214,7 @@
 
     function openEditModal(id, nama, urutan, isActive, count) {
         document.getElementById('modalTitle').innerText = 'Edit Kategori';
-        document.getElementById('categoryForm').action = "/admin/categories/" + id;
+        document.getElementById('categoryForm').action = "{{ url('admin/categories') }}/" + id;
         document.getElementById('methodField').value = 'PATCH';
         document.getElementById('cat_nama').value = nama;
         document.getElementById('cat_urutan').value = urutan;

@@ -20,16 +20,19 @@
 
         {{-- Status Filter Section --}}
         <div class="flex items-center gap-1 px-1 py-1 sm:py-0 overflow-x-auto no-scrollbar">
-            <button onclick="filterStatus('all')" data-status-filter="all" class="status-btn flex-none px-6 py-2.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all bg-brand-accent text-white shadow-lg shadow-brand-accent/20">
+            <button onclick="filterStatus('all')" data-status-filter="all" class="status-btn flex-none px-5 py-2.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all bg-brand-accent text-white shadow-lg shadow-brand-accent/20">
                 Semua
             </button>
-            <button onclick="filterStatus('confirmed')" data-status-filter="confirmed" class="status-btn flex-none px-6 py-2.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all text-slate-400 hover:text-slate-600 hover:bg-slate-50">
+            <button onclick="filterStatus('pending')" data-status-filter="pending" class="status-btn flex-none px-5 py-2.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all text-slate-400 hover:text-slate-600 hover:bg-slate-50">
+                Pending
+            </button>
+            <button onclick="filterStatus('confirmed')" data-status-filter="confirmed" class="status-btn flex-none px-5 py-2.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all text-slate-400 hover:text-slate-600 hover:bg-slate-50">
                 Menunggu Bayar
             </button>
-            <button onclick="filterStatus('completed')" data-status-filter="completed" class="status-btn flex-none px-6 py-2.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all text-slate-400 hover:text-slate-600 hover:bg-slate-50">
+            <button onclick="filterStatus('completed')" data-status-filter="completed" class="status-btn flex-none px-5 py-2.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all text-slate-400 hover:text-slate-600 hover:bg-slate-50">
                 Selesai
             </button>
-            <button onclick="filterStatus('cancelled')" data-status-filter="cancelled" class="status-btn flex-none px-6 py-2.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all text-slate-400 hover:text-slate-600 hover:bg-slate-50">
+            <button onclick="filterStatus('cancelled')" data-status-filter="cancelled" class="status-btn flex-none px-5 py-2.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all text-slate-400 hover:text-slate-600 hover:bg-slate-50">
                 Batal
             </button>
         </div>
@@ -74,7 +77,8 @@
                     <td class="px-8 py-5">
                         @php
                             $statusConfig = [
-                                'confirmed' => ['bg' => 'bg-amber-50', 'text' => 'text-amber-500', 'label' => 'Menunggu Bayar'],
+                                'pending'   => ['bg' => 'bg-amber-50', 'text' => 'text-amber-500', 'label' => 'Pending'],
+                                'confirmed' => ['bg' => 'bg-sky-50', 'text' => 'text-sky-600', 'label' => 'Menunggu Bayar'],
                                 'completed' => ['bg' => 'bg-brand-secondary/10', 'text' => 'text-brand-primary', 'label' => 'Selesai'],
                                 'cancelled' => ['bg' => 'bg-red-50', 'text' => 'text-red-500', 'label' => 'Dibatalkan'],
                             ];

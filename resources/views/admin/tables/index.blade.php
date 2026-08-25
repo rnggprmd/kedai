@@ -226,7 +226,7 @@
 
     function openEditModal(data) {
         document.getElementById('modalTitle').innerText = 'Edit Meja';
-        document.getElementById('tableForm').action = "/admin/tables/" + data.id;
+        document.getElementById('tableForm').action = "{{ url('admin/tables') }}/" + data.id;
         document.getElementById('methodField').value = 'PATCH';
         
         document.getElementById('tbl_kode').value = data.kode_meja;

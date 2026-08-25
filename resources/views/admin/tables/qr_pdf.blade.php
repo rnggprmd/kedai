@@ -80,10 +80,31 @@
         <div class="qr-wrapper">
             @php
                 $qrUrl = "https://quickchart.io/qr?text=" . urlencode(route('customer.menu', $table->qr_token)) . "&size=350&margin=1&ecLevel=H";
-                // DomPDF works better with base64 images if they are external
-                $qrData = base64_encode(file_get_contents($qrUrl));
+                $qrData = null;
+                try {
+                    $context = stream_context_create([
+                        'http' => [
+                            'timeout' => 5,
+                            'ignore_errors' => true,
+                        ],
+                        'ssl' => [
+                            'verify_peer' => false,
+                            'verify_peer_name' => false,
+                        ]
+                    ]);
+                    $rawImage = @file_get_contents($qrUrl, false, $context);
+                    if ($rawImage) {
+                        $qrData = base64_encode($rawImage);
+                    }
+                } catch (\Throwable $e) {
+                    $qrData = null;
+                }
             @endphp
-            <img src="data:image/png;base64,{{ $qrData }}" class="qr-image">
+            @if($qrData)
+                <img src="data:image/png;base64,{{ $qrData }}" class="qr-image" alt="QR Code">
+            @else
+                <img src="{{ $qrUrl }}" class="qr-image" alt="QR Code">
+            @endif
         </div>
 
         <div class="table-name">{{ $table->nama_meja }}</div>
