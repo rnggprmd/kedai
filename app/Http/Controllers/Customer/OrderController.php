@@ -208,26 +208,31 @@ class OrderController extends Controller
 
         // Jika status masih belum lunas, coba cek status ke Midtrans (Direct Check)
         // Ini sangat berguna jika Webhook terhambat atau testing di localhost
-        if (!in_array($order->status, ['completed', 'cancelled'])) {
+        if (!in_array($order->status, ['completed', 'cancelled']) && config('midtrans.server_key')) {
             try {
                 $status = \Midtrans\Transaction::status($order->kode_order);
-                
-                if ($status->transaction_status == 'settlement' || $status->transaction_status == 'capture') {
+                $transStatus = is_object($status) ? ($status->transaction_status ?? null) : ($status['transaction_status'] ?? null);
+                $fraudStatus = is_object($status) ? ($status->fraud_status ?? null) : ($status['fraud_status'] ?? null);
+                $payType = is_object($status) ? ($status->payment_type ?? 'qris') : ($status['payment_type'] ?? 'qris');
+
+                if ($transStatus === 'settlement' || ($transStatus === 'capture' && $fraudStatus !== 'challenge')) {
                     $order->update(['status' => 'completed']);
                     
                     // Buat record payment jika belum ada
                     if (!\App\Models\Payment::where('order_id', $order->id)->exists()) {
                         \App\Models\Payment::create([
                             'order_id' => $order->id,
-                            'metode' => 'qris',
+                            'metode' => in_array($payType, ['qris', 'gopay', 'shopeepay']) ? 'qris' : 'transfer',
                             'jumlah_bayar' => $order->total_harga,
                             'jumlah_kembali' => 0,
                             'status' => 'paid',
                             'paid_at' => now(),
                         ]);
                     }
+                } elseif (in_array($transStatus, ['deny', 'expire', 'cancel'])) {
+                    $order->update(['status' => 'cancelled']);
                 }
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 // Abaikan jika transaksi belum dibuat di Midtrans atau error koneksi
             }
         }

@@ -173,4 +173,81 @@ class KedaiSystemTest extends TestCase
         $pdfResponse->assertStatus(200);
         $pdfResponse->assertHeader('content-type', 'application/pdf');
     }
+
+    public function test_kasir_cannot_pay_for_cancelled_order()
+    {
+        $kasir = User::factory()->create(['role' => 'kasir', 'is_active' => true]);
+        $table = Table::first() ?? Table::create(['kode_meja' => 'T-' . uniqid(), 'nama_meja' => 'Meja Test', 'kapasitas' => 2]);
+
+        $order = Order::create([
+            'table_id' => $table->id,
+            'nama_pelanggan' => 'Cancelled Guest',
+            'status' => 'cancelled',
+            'total_harga' => 30000,
+        ]);
+
+        $response = $this->actingAs($kasir)->post('/kasir/orders/' . $order->id . '/pay', [
+            'metode' => 'tunai',
+            'jumlah_bayar' => 50000,
+        ]);
+
+        $response->assertSessionHas('error');
+        $order->refresh();
+        $this->assertEquals('cancelled', $order->status);
+        $this->assertNull($order->payment);
+    }
+
+    public function test_admin_category_active_and_inactive_display()
+    {
+        $admin = User::factory()->create(['role' => 'admin', 'is_active' => true]);
+        $activeCat = Category::create(['nama' => 'Cat Active ' . uniqid(), 'urutan' => 1, 'is_active' => true]);
+        $inactiveCat = Category::create(['nama' => 'Cat Inactive ' . uniqid(), 'urutan' => 2, 'is_active' => false]);
+
+        $response = $this->actingAs($admin)->get('/admin/categories');
+        $response->assertStatus(200);
+        $response->assertSee($activeCat->nama);
+        $response->assertSee($inactiveCat->nama);
+        $response->assertSee('Non-Aktif');
+    }
+
+    public function test_admin_can_create_user_with_password_confirmation()
+    {
+        $admin = User::factory()->create(['role' => 'admin', 'is_active' => true]);
+
+        $response = $this->actingAs($admin)->post('/admin/users', [
+            'name' => 'New Staff Kasir',
+            'email' => 'newkasir_' . uniqid() . '@kedai.com',
+            'role' => 'kasir',
+            'password' => 'secret12345',
+            'password_confirmation' => 'secret12345',
+            'is_active' => '1',
+        ]);
+
+        $response->assertRedirect('/admin/users');
+        $this->assertDatabaseHas('users', [
+            'name' => 'New Staff Kasir',
+            'role' => 'kasir',
+            'is_active' => 1,
+        ]);
+    }
+
+    public function test_admin_can_update_user_and_preserve_active_status()
+    {
+        $admin = User::factory()->create(['role' => 'admin', 'is_active' => true]);
+        $targetUser = User::factory()->create(['role' => 'kasir', 'is_active' => true]);
+
+        $response = $this->actingAs($admin)->put('/admin/users/' . $targetUser->id, [
+            'name' => 'Updated Name',
+            'email' => $targetUser->email,
+            'role' => 'kasir',
+            'is_active' => '1',
+        ]);
+
+        $response->assertRedirect('/admin/users');
+        $targetUser->refresh();
+        $this->assertEquals('Updated Name', $targetUser->name);
+        $this->assertTrue((bool) $targetUser->is_active);
+    }
 }
+
+

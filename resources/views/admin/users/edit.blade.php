@@ -74,24 +74,54 @@
                         <i class="bi bi-shield-check absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 text-sm"></i>
                         <select name="role"
                             class="w-full bg-slate-50 border border-slate-200 rounded-2xl pl-11 pr-5 py-4 font-bold text-slate-900 focus:ring-2 focus:ring-brand-primary focus:border-brand-primary appearance-none transition-all" required>
-                            <option value="admin" {{ $user->role == 'admin' ? 'selected' : '' }}>Administrator</option>
-                            <option value="kasir" {{ $user->role == 'kasir' ? 'selected' : '' }}>Staff Kasir</option>
+                            <option value="admin" {{ old('role', $user->role) == 'admin' ? 'selected' : '' }}>Administrator</option>
+                            <option value="kasir" {{ old('role', $user->role) == 'kasir' ? 'selected' : '' }}>Staff Kasir</option>
                         </select>
                         <i class="bi bi-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-slate-300 text-xs pointer-events-none"></i>
                     </div>
                 </div>
 
+                {{-- Status Aktif --}}
+                <div class="bg-slate-50 p-5 rounded-2xl flex items-center justify-between border border-slate-100">
+                    <div>
+                        <div class="text-slate-900 font-extrabold text-sm">Status Aktif</div>
+                        <div class="text-slate-400 text-[10px] font-bold uppercase tracking-widest mt-0.5">Izin akses masuk ke sistem</div>
+                    </div>
+                    <div class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" name="is_active" id="is_active" value="1" {{ old('is_active', $user->is_active) ? 'checked' : '' }} class="sr-only peer">
+                        <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-primary"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {{-- New Password --}}
                 <div>
                     <label class="block text-slate-400 text-[10px] font-bold uppercase tracking-widest mb-2.5 ml-1">Password Baru <span class="text-slate-300 font-medium lowercase">(opsional)</span></label>
                     <div class="relative">
                         <i class="bi bi-key absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 text-sm"></i>
                         <input type="password" name="password" id="passwordField"
-                            class="w-full bg-slate-50 border border-slate-200 rounded-2xl pl-11 pr-11 py-4 font-bold text-slate-900 focus:ring-2 focus:ring-brand-primary focus:border-brand-primary transition-all placeholder:text-slate-300"
-                            placeholder="Kosongkan jika tidak diubah">
+                            class="w-full bg-slate-50 border border-slate-200 rounded-2xl pl-11 pr-11 py-4 font-bold text-slate-900 focus:ring-2 focus:ring-brand-primary focus:border-brand-primary transition-all placeholder:text-slate-300 @error('password') border-brand-primary/30 bg-brand-primary/5 @enderror"
+                            placeholder="Min. 8 karakter jika diubah">
                         <button type="button" onclick="togglePwd('passwordField','eyeIconEdit')" tabindex="-1"
                             class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-300 hover:text-slate-600 transition-colors">
                             <i class="bi bi-eye" id="eyeIconEdit"></i>
+                        </button>
+                    </div>
+                    @error('password') <p class="text-brand-primary text-[10px] font-bold mt-2 ml-1 uppercase tracking-widest">{{ $message }}</p> @enderror
+                </div>
+
+                {{-- Password Confirmation --}}
+                <div>
+                    <label class="block text-slate-400 text-[10px] font-bold uppercase tracking-widest mb-2.5 ml-1">Konfirmasi Password Baru</label>
+                    <div class="relative">
+                        <i class="bi bi-key-fill absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 text-sm"></i>
+                        <input type="password" name="password_confirmation" id="passwordConfField"
+                            class="w-full bg-slate-50 border border-slate-200 rounded-2xl pl-11 pr-11 py-4 font-bold text-slate-900 focus:ring-2 focus:ring-brand-primary focus:border-brand-primary transition-all placeholder:text-slate-300"
+                            placeholder="Ulangi password baru">
+                        <button type="button" onclick="togglePwd('passwordConfField','eyeIconConf')" tabindex="-1"
+                            class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-300 hover:text-slate-600 transition-colors">
+                            <i class="bi bi-eye" id="eyeIconConf"></i>
                         </button>
                     </div>
                 </div>

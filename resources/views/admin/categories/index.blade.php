@@ -58,7 +58,8 @@
             <tbody class="divide-y divide-slate-50">
                 @forelse($categories as $category)
                 <tr class="category-row hover:bg-slate-50/50 transition-colors group" 
-                    data-status="{{ $category->is_active ? 'active' : 'inactive' }}">
+                    data-status="{{ $category->is_active ? 'active' : 'inactive' }}"
+                    data-search="{{ strtolower($category->nama) }}">
                     <td class="px-8 py-5">
                         <div class="text-slate-900 font-bold text-sm">
                             #{{ $category->urutan }}
@@ -71,9 +72,15 @@
                         <span class="text-slate-900 font-bold text-sm">{{ $category->menus_count ?? 0 }} <span class="text-slate-400 text-xs">Produk</span></span>
                     </td>
                     <td class="px-8 py-5">
-                        <span class="inline-flex items-center gap-1.5 text-brand-primary font-black text-[10px] uppercase tracking-widest">
-                            <span class="w-1.5 h-1.5 bg-brand-secondary rounded-full animate-pulse"></span> Aktif
-                        </span>
+                        @if($category->is_active)
+                            <span class="inline-flex items-center gap-1.5 text-brand-primary font-black text-[10px] uppercase tracking-widest">
+                                <span class="w-1.5 h-1.5 bg-brand-secondary rounded-full animate-pulse"></span> Aktif
+                            </span>
+                        @else
+                            <span class="inline-flex items-center gap-1.5 text-slate-400 font-black text-[10px] uppercase tracking-widest">
+                                <span class="w-1.5 h-1.5 bg-slate-300 rounded-full"></span> Non-Aktif
+                            </span>
+                        @endif
                     </td>
                     <td class="px-8 py-5">
                         <div class="flex justify-end gap-2">
@@ -195,6 +202,7 @@
         document.getElementById('cat_nama').value = '';
         document.getElementById('cat_urutan').value = 0;
         document.getElementById('cat_is_active').checked = true;
+        document.getElementById('status_text').innerText = 'Aktif';
         document.getElementById('preview_nama').innerText = 'Kategori Baru';
         document.getElementById('preview_stats').innerText = '0 Produk';
         
@@ -219,6 +227,7 @@
         document.getElementById('cat_nama').value = nama;
         document.getElementById('cat_urutan').value = urutan;
         document.getElementById('cat_is_active').checked = isActive;
+        document.getElementById('status_text').innerText = isActive ? 'Aktif' : 'Non-Aktif';
         document.getElementById('preview_nama').innerText = nama;
         document.getElementById('preview_stats').innerText = count + ' Produk';
         
@@ -255,6 +264,7 @@
     function toggleStatus() {
         const checkbox = document.getElementById('cat_is_active');
         checkbox.checked = !checkbox.checked;
+        document.getElementById('status_text').innerText = checkbox.checked ? 'Aktif' : 'Non-Aktif';
     }
 
     // Close on Escape
@@ -282,10 +292,10 @@
         let hasResults = false;
 
         rows.forEach(row => {
-            const name = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
+            const searchText = row.dataset.search || row.querySelector('td:nth-child(2)').textContent.toLowerCase();
             const status = row.dataset.status;
             
-            const matchSearch = name.includes(query);
+            const matchSearch = searchText.includes(query);
             const matchStatus = currentStatusFilter === 'all' || status === currentStatusFilter;
 
             if (matchSearch && matchStatus) {

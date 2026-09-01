@@ -165,9 +165,11 @@ class OrderController extends Controller
             'jumlah_bayar' => 'required|numeric|min:' . $order->total_harga,
         ]);
 
-        // Cegah pembayaran ganda
-        if ($order->payment || $order->status === 'completed') {
-            return back()->with('error', 'Pesanan ini sudah lunas sebelumnya.');
+        // Cegah pembayaran ganda atau pesanan yang dibatalkan
+        if ($order->payment || in_array($order->status, ['completed', 'cancelled'])) {
+            return back()->with('error', $order->status === 'cancelled' 
+                ? 'Pesanan telah dibatalkan dan tidak dapat diproses pembayarannya.' 
+                : 'Pesanan ini sudah lunas sebelumnya.');
         }
 
         $jumlahKembali = (float) $request->jumlah_bayar - (float) $order->total_harga;

@@ -135,7 +135,7 @@
             if (btn.dataset.statusFilter === status) {
                 btn.classList.add('bg-brand-accent', 'text-white', 'shadow-lg', 'shadow-brand-accent/20');
                 btn.classList.remove('text-slate-400', 'hover:text-slate-600', 'hover:bg-slate-50');
-                btn.style.backgroundColor = '#9D4EDD';
+                btn.style.backgroundColor = 'var(--brand-accent)';
                 btn.style.color = 'white';
             } else {
                 btn.classList.remove('bg-brand-accent', 'text-white', 'shadow-lg', 'shadow-brand-accent/20');
